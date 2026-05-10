@@ -41,9 +41,15 @@ export async function POST(req: Request) {
   const input = { brand, campaign };
 
   try {
-    // Step 1: Scrape LinkedIn profiles via Apify, filtering by industry only.
-    console.log(`[match-creators] Step 1: scraping LinkedIn profiles for industry "${brand.industry}"…`);
-    let profiles = await searchLinkedInPeople(brand.industry, 25);
+    // Step 1: Two-stage Apify pipeline — Google SERP → profile scrape.
+    console.log(
+      `[match-creators] Step 1: scraping LinkedIn for industry="${brand.industry}", keywords=${JSON.stringify(brand.keywords)}`
+    );
+    let profiles = await searchLinkedInPeople(
+      brand.industry,
+      brand.keywords ?? [],
+      5 // hard cap — profile scraping is the costly stage
+    );
     console.log(`[match-creators] Apify returned ${profiles.length} profile(s)`);
 
     // LinkedIn search-based Apify actors are notoriously unreliable. When they
