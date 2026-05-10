@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FUNNEL_STEPS } from "@/lib/constants";
 import { useFunnelStore } from "@/lib/store";
@@ -21,7 +21,12 @@ export function StepNav({
   disableNext = false,
 }: StepNavProps) {
   const router = useRouter();
-  const { currentStep, setStep } = useFunnelStore();
+  const pathname = usePathname();
+  const { setStep } = useFunnelStore();
+
+  // Derive current step from URL so navigation is never out of sync with the store
+  const stepFromPath = FUNNEL_STEPS.findIndex((s) => s.path === pathname) + 1;
+  const currentStep = stepFromPath > 0 ? stepFromPath : 1;
 
   const isFirst = currentStep === 1;
   const isLast = currentStep === FUNNEL_STEPS.length;
