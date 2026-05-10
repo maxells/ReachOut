@@ -33,9 +33,9 @@ describe("CLōD API — generateSearchStrategy", () => {
 
     expect(strategy).toBeDefined();
 
-    expect(strategy.searchQueries).toBeInstanceOf(Array);
-    expect(strategy.searchQueries.length).toBeGreaterThanOrEqual(3);
-    strategy.searchQueries.forEach((q) => {
+    expect(strategy.titleSearches).toBeInstanceOf(Array);
+    expect(strategy.titleSearches.length).toBeGreaterThanOrEqual(3);
+    strategy.titleSearches.forEach((q) => {
       expect(typeof q).toBe("string");
       expect(q.length).toBeGreaterThan(0);
     });

@@ -19,9 +19,13 @@ const model = clod.chat("gpt-4o-mini");
 // --- Schemas for structured output ---
 
 const searchStrategySchema = z.object({
-  searchQueries: z
+  titleSearches: z
     .array(z.string())
-    .describe("3-5 LinkedIn search queries optimized to find real influencers"),
+    .describe(
+      "3-5 simple keyword phrases to search LinkedIn people by name/keyword. " +
+      "Each should be a SHORT phrase (1-3 words) like 'AI', 'machine learning', 'developer tools'. " +
+      "Do NOT use boolean operators (AND/OR). Keep them simple and broad."
+    ),
   targetTitles: z
     .array(z.string())
     .describe("Job titles/roles commonly held by influencers in this space"),
@@ -71,7 +75,12 @@ Industry: ${brand.industry}
 Search Keywords: ${keywords.join(", ")}
 Follower Range: ${followersMin} - ${followersMax}
 
-Generate LinkedIn search queries that will find real content creators and thought leaders in the "${brand.industry}" industry. Use the search keywords as primary signals. Combine them with industry-specific job titles and roles (e.g. "thought leader", "keynote speaker", "content creator", "newsletter author") to produce effective queries.`,
+Generate "titleSearches" — very SHORT keyword phrases (1-3 words) to search LinkedIn for people in "${brand.industry}".
+
+Good examples: "AI", "machine learning", "developer tools", "SaaS"
+Bad examples (too long/complex): "AI thought leader content creator", '"AI" AND "thought leader"'
+
+These go into LinkedIn People Search as the "name" keyword, so keep them very simple and broad — 1-3 words max.`,
   });
 
   return object;

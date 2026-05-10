@@ -36,16 +36,16 @@ interface ApifyRawProfile {
 }
 
 export async function searchLinkedInPeople(
-  queries: string[],
+  titleSearches: string[],
   maxResults = 20
 ): Promise<LinkedInProfile[]> {
   const allProfiles: LinkedInProfile[] = [];
 
-  for (const query of queries) {
+  for (const title of titleSearches) {
     if (allProfiles.length >= maxResults) break;
 
     const remaining = maxResults - allProfiles.length;
-    const profiles = await runApifyActor(query, remaining);
+    const profiles = await runApifyActor(title, remaining);
     allProfiles.push(...profiles);
   }
 
@@ -59,20 +59,22 @@ export async function searchLinkedInPeople(
 }
 
 async function runApifyActor(
-  query: string,
+  titleKeyword: string,
   maxResults: number
 ): Promise<LinkedInProfile[]> {
+  const input = {
+    name: titleKeyword,
+    maxResults: Math.min(maxResults, 20),
+  };
+  console.log(`[apify] Starting actor with input:`, JSON.stringify(input));
+
   // Start the actor run
   const startResponse = await fetch(
     `${APIFY_BASE_URL}/acts/${encodeURIComponent(ACTOR_ID)}/runs?token=${APIFY_TOKEN}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        searchQuery: query,
-        maxResults: Math.min(maxResults, 20),
-        searchType: "people",
-      }),
+      body: JSON.stringify(input),
     }
   );
 
@@ -83,6 +85,7 @@ async function runApifyActor(
 
   const runData: ApifyRunResponse = await startResponse.json();
   const runId = runData.data.id;
+  console.log(`[apify] Actor run started: id=${runId}, status=${runData.data.status}`);
 
   // Poll for completion
   let status = runData.data.status;
@@ -118,11 +121,17 @@ async function runApifyActor(
   }
 
   const rawItems: ApifyRawProfile[] = await datasetResponse.json();
+  console.log(`[apify] Title "${titleKeyword}" → ${rawItems.length} raw item(s), run status: ${status}`);
+  if (rawItems.length > 0) {
+    console.log("[apify] First raw item keys:", Object.keys(rawItems[0]).join(", "));
+    console.log("[apify] First raw item:", JSON.stringify(rawItems[0]).slice(0, 500));
+  }
 
   // Convert and validate
-  return rawItems
-    .map(normalizeProfile)
-    .filter((p): p is LinkedInProfile => p !== null);
+  const normalized = rawItems.map(normalizeProfile);
+  const valid = normalized.filter((p): p is LinkedInProfile => p !== null);
+  console.log(`[apify] After normalize: ${valid.length}/${rawItems.length} valid`);
+  return valid;
 }
 
 function normalizeProfile(raw: ApifyRawProfile): LinkedInProfile | null {
