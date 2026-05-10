@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ReachOut - AI Influencer Outreach Platform",
-  description: "Find, match, and reach out to influencers with AI-powered insights",
+  title: "GoFamous — Influencer outreach for AI companies",
+  description:
+    "Find, match, and reach creators smartly. AI-powered influencer outreach built for agent-led brands.",
 };
 
 export default function RootLayout({

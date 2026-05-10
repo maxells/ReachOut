@@ -27,6 +27,11 @@ function saveBrand(data) {
   localStorage.setItem(STORAGE_BRAND, JSON.stringify(data));
 }
 
+function getSelectedAud() {
+  const sel = document.querySelector(".aud-chip.selected");
+  return sel ? sel.getAttribute("data-aud") : "2";
+}
+
 function gatherForm() {
   return {
     url: $("#url-in").value.trim(),
@@ -34,7 +39,7 @@ function gatherForm() {
     agentDesc: $("#agent-desc").value.trim(),
     tw: $("#tw-in").value.trim(),
     yt: $("#yt-in").value.trim(),
-    aud: $("#aud-slider").value,
+    aud: getSelectedAud(),
   };
 }
 
@@ -54,7 +59,7 @@ function applyToPreview() {
   hEl.innerHTML =
     handles.length > 0
       ? handles.map((h) => `<span class="tag platform">${escapeHtml(h.l)}</span>`).join(" ")
-      : `<span class="tag" style="opacity:0.4">social handles</span>`;
+      : `<span class="tag tag--preview-muted">social handles</span>`;
 
   saveBrand({
     ...d,
@@ -78,13 +83,32 @@ function bindCats() {
   });
 }
 
+function bindAudChips() {
+  document.querySelectorAll(".aud-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".aud-chip").forEach((b) => {
+        b.classList.remove("selected");
+        b.setAttribute("aria-checked", "false");
+      });
+      btn.classList.add("selected");
+      btn.setAttribute("aria-checked", "true");
+      applyToPreview();
+    });
+    btn.setAttribute("role", "radio");
+    btn.setAttribute(
+      "aria-checked",
+      btn.classList.contains("selected") ? "true" : "false"
+    );
+  });
+}
+
 function updateCatTags() {
   const sel = [...document.querySelectorAll(".cat-pill.selected")].map((e) => e.textContent);
   const el = $("#pv-tags");
   el.innerHTML =
     sel.length > 0
       ? sel.map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join("")
-      : `<span class="tag" style="opacity:0.4">categories</span>`;
+      : `<span class="tag tag--preview-muted">categories</span>`;
 }
 
 function hydrate() {
@@ -94,7 +118,19 @@ function hydrate() {
   if (d.agentDesc) $("#agent-desc").value = d.agentDesc;
   if (d.tw) $("#tw-in").value = d.tw;
   if (d.yt) $("#yt-in").value = d.yt;
-  if (d.aud) $("#aud-slider").value = d.aud;
+  const audKey = d.aud != null && d.aud !== "" ? String(d.aud) : "2";
+  let matched = false;
+  document.querySelectorAll(".aud-chip").forEach((btn) => {
+    const on = btn.getAttribute("data-aud") === audKey;
+    btn.classList.toggle("selected", on);
+    if (on) matched = true;
+  });
+  if (!matched) {
+    document.querySelectorAll(".aud-chip").forEach((btn) => {
+      const on = btn.getAttribute("data-aud") === "2";
+      btn.classList.toggle("selected", on);
+    });
+  }
   if (d.categories && d.categories.length) {
     d.categories.forEach((label) => {
       document.querySelectorAll(".cat-pill").forEach((p) => {
@@ -110,15 +146,11 @@ function wire() {
   ["url-in", "name-in", "agent-desc", "tw-in", "yt-in"].forEach((id) => {
     $(`#${id}`).addEventListener("input", applyToPreview);
   });
-  $("#aud-slider").addEventListener("input", () => {
-    $("#aud-label").textContent = AUD_LABELS[$("#aud-slider").value];
-    applyToPreview();
-  });
+  bindAudChips();
   bindCats();
 }
 
 function init() {
-  $("#aud-label").textContent = AUD_LABELS[$("#aud-slider").value];
   hydrate();
   wire();
 }

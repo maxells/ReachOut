@@ -1,4 +1,4 @@
-# ReachOut Influencer -- 3 人并行开发架构
+# GoFamous Influencer — 3 人并行开发架构
 
 ## 概述
 

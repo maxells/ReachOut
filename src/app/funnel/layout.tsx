@@ -10,7 +10,7 @@ export default function FunnelLayout({
       <header className="border-b bg-background">
         <div className="mx-auto max-w-4xl px-4 py-4">
           <h1 className="text-xl font-bold tracking-tight">
-            Reach<span className="text-primary">Out</span>
+            Go<span className="text-primary">Famous</span>
           </h1>
         </div>
       </header>

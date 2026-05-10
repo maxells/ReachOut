@@ -1,12 +1,13 @@
 {
-  "name": "reachout",
+  "name": "gofamous",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "landing": "node scripts/serve-front-end.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",

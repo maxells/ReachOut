@@ -8,6 +8,13 @@ import type {
   OutreachState,
 } from "./types";
 
+/** Brand slice: shared `BrandInfo` plus input-only fields (not in `types.ts` contract). */
+export type BrandSlice = BrandInfo & {
+  hashtags: string[];
+  keywords: string[];
+  brandAliases: string[];
+};
+
 // ============================================================
 // Zustand Store — the shared state contract between all modules.
 //
@@ -25,8 +32,8 @@ interface FunnelStore {
   setStep: (step: number) => void;
 
   // ----- Member 1: Input -----
-  brand: BrandInfo;
-  setBrand: (brand: Partial<BrandInfo>) => void;
+  brand: BrandSlice;
+  setBrand: (brand: Partial<BrandSlice>) => void;
   campaign: CampaignConfig;
   setCampaign: (campaign: Partial<CampaignConfig>) => void;
 
@@ -44,12 +51,15 @@ interface FunnelStore {
   reset: () => void;
 }
 
-const initialBrand: BrandInfo = {
+const initialBrand: BrandSlice = {
   name: "",
   url: "",
   industry: "",
   targetAudience: "",
   socials: {},
+  hashtags: [],
+  keywords: [],
+  brandAliases: [],
 };
 
 const initialCampaign: CampaignConfig = {
@@ -73,7 +83,13 @@ export const useFunnelStore = create<FunnelStore>()(
 
       brand: initialBrand,
       setBrand: (brand) =>
-        set((state) => ({ brand: { ...state.brand, ...brand } })),
+        set((state) => {
+          const next: BrandSlice = { ...state.brand, ...brand };
+          if (brand.socials !== undefined) {
+            next.socials = { ...state.brand.socials, ...brand.socials };
+          }
+          return { brand: next };
+        }),
 
       campaign: initialCampaign,
       setCampaign: (campaign) =>
@@ -100,7 +116,7 @@ export const useFunnelStore = create<FunnelStore>()(
         }),
     }),
     {
-      name: "reachout-funnel",
+      name: "gofamous-funnel",
     }
   )
 );

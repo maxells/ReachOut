@@ -100,7 +100,7 @@ export const useFunnelStore = create<FunnelStore>()(
         }),
     }),
     {
-      name: "reachout-funnel",
+      name: "gofamous-funnel",
     }
   )
 );

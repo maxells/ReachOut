@@ -90,3 +90,13 @@ export const FOLLOWER_RANGE_PRESETS = [
   { label: "Macro (200K - 500K)", range: [200000, 500000] as [number, number] },
   { label: "All Sizes", range: [1000, 500000] as [number, number] },
 ];
+
+/** Campaign budget slider bounds (USD). */
+export const CAMPAIGN_BUDGET_MIN = 500;
+export const CAMPAIGN_BUDGET_MAX = 250_000;
+export const CAMPAIGN_BUDGET_STEP = 500;
+
+/** Creator follower range slider bounds (used with presets). */
+export const FOLLOWER_RANGE_MIN = 1000;
+export const FOLLOWER_RANGE_MAX = 500_000;
+export const FOLLOWER_RANGE_STEP = 1000;

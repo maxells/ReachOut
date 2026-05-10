@@ -7,7 +7,7 @@ export default function Home() {
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <h1 className="text-xl font-bold tracking-tight">
-            Reach<span className="text-primary">Out</span>
+            Go<span className="text-primary">Famous</span>
           </h1>
           <Link href="/funnel">
             <Button>Get Started</Button>
@@ -33,7 +33,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t py-6 text-center text-sm text-muted-foreground">
-        <p>ReachOut — Built for the Hackathon</p>
+        <p>GoFamous</p>
       </footer>
     </div>
   );

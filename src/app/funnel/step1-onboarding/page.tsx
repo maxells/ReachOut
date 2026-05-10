@@ -1,34 +1,26 @@
 "use client";
 
+import * as React from "react";
+import { BrandOnboardingForm } from "@/components/input/brand-onboarding-form";
+import { isBrandStepComplete } from "@/components/input/brand-validation";
 import { StepLayout } from "@/components/funnel/step-layout";
 import { StepNav } from "@/components/funnel/step-nav";
-
-// =============================================================
-// [Member 1] Step 1: Brand Onboarding
-// Owner: Member 1 (Input)
-//
-// TODO: Build the brand information form here.
-// - Company name, website URL
-// - Industry selection (use INDUSTRY_OPTIONS from constants)
-// - Social media handles (twitter, youtube, linkedin)
-// - Target audience description
-//
-// Use useFunnelStore().setBrand() to save form data.
-// Components go in: src/components/input/
-// =============================================================
+import { useFunnelStore } from "@/lib/store";
 
 export default function Step1Onboarding() {
+  const brand = useFunnelStore((s) => s.brand);
+
+  const canContinue = React.useMemo(() => isBrandStepComplete(brand), [brand]);
+
   return (
     <>
       <StepLayout
         title="Brand Onboarding"
         description="Tell us about your brand so our AI can find the perfect creators for you."
       >
-        <div className="flex min-h-[300px] items-center justify-center text-muted-foreground">
-          <p>Step 1 form — to be implemented by Member 1</p>
-        </div>
+        <BrandOnboardingForm />
       </StepLayout>
-      <StepNav />
+      <StepNav disableNext={!canContinue} />
     </>
   );
 }

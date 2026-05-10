@@ -96,30 +96,44 @@
               </div>
             </div>
             <div class="section-block-ro">
-              <label class="form-label">Primary buyer</label>
-              <div class="slider-row-brand">
-                <input type="range" id="aud-slider" min="1" max="4" step="1" value="2" />
-                <span class="slider-val-brand" id="aud-label"></span>
+              <label class="form-label" id="primary-buyer-label">Primary buyer</label>
+              <div
+                class="cat-grid"
+                role="radiogroup"
+                aria-labelledby="primary-buyer-label"
+              >
+                <button type="button" class="aud-chip" data-aud="1">
+                  Indie / solo builders
+                </button>
+                <button type="button" class="aud-chip selected" data-aud="2">
+                  Seed–Series A teams
+                </button>
+                <button type="button" class="aud-chip" data-aud="3">
+                  Growth-stage product orgs
+                </button>
+                <button type="button" class="aud-chip" data-aud="4">
+                  Enterprise pilot programs
+                </button>
               </div>
             </div>
           </div>
 
           <aside class="brand-preview-card">
             <p class="form-label" style="margin-bottom: 0.5rem">Live preview</p>
-            <div class="kol-card" style="box-shadow: var(--shadow-hard)">
+            <div class="kol-card kol-card--preview-green">
               <div class="kol-card-top">
                 <div class="avatar" id="pv-av">—</div>
                 <div class="kol-meta">
                   <h3 id="pv-name">Your agent product</h3>
                   <p class="kol-handle" id="pv-url">youragent.dev</p>
-                  <div class="kol-tags" id="pv-tags"><span class="tag" style="opacity: 0.4">categories</span></div>
+                  <div class="kol-tags" id="pv-tags"><span class="tag tag--preview-muted">categories</span></div>
                 </div>
               </div>
               <p class="bc-agent-desc" id="pv-desc">
                 Describe what your AI agent does for users — helps match creators who speak that language.
               </p>
-              <div class="kol-tags" id="pv-handles" style="padding: 0 1rem 1rem">
-                <span class="tag" style="opacity: 0.4">social handles</span>
+              <div class="kol-tags kol-tags--handles" id="pv-handles">
+                <span class="tag tag--preview-muted">social handles</span>
               </div>
               <div class="kol-stats">
                 <div class="stat">

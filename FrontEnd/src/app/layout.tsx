@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ReachOut - AI Influencer Outreach Platform",
+  title: "GoFamous — Influencer outreach for AI companies",
   description: "Find, match, and reach out to influencers with AI-powered insights",
 };
 

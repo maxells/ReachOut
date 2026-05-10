@@ -1,8 +1,27 @@
-# ReachOut — AI-Powered Influencer Outreach Platform
+# GoFamous — Influencer outreach for AI companies
 
-Find, match, and reach out to the perfect creators for your brand. Our AI agent acts as your strategist — not just a database.
+Find, match, and reach creators smartly. AI-powered outreach built for agent-led brands.
 
-## Quick Start
+## Marketing UI (canonical)
+
+The **GoFamous landing and static pages** live in **`FrontEnd/`**. The landing page is **`FrontEnd/index.html`** (hero, typewriter splash, glass stats, yellow CTA, full theme in `FrontEnd/css/styles.css`).
+
+Preview that UI without Next.js:
+
+```bash
+npm install
+npm run landing
+```
+
+Open **http://127.0.0.1:4173/** — you should see `index.html` as the entry.
+
+**`localhost` refused to connect?** That means no server is running. In a terminal at the repo root run `npm run landing` and keep that terminal open, then refresh the browser.
+
+See **`FrontEnd/README.md`** for file layout.
+
+## Next.js app (funnel + APIs)
+
+The **`src/`** app is the **funnel workflow** (`/funnel/...`), Zustand store, and API routes. Its root route `/` is a simple placeholder; it is **not** a copy of `FrontEnd/index.html` unless you merge designs later.
 
 ```bash
 # 1. Install dependencies
@@ -12,11 +31,13 @@ npm install
 cp .env.local.example .env.local
 # Edit .env.local and add your OPENAI_API_KEY
 
-# 3. Run the dev server
+# 3. Run the Next dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000) for the Next app (landing stub + **Get started → `/funnel`**).
+
+**Both at once:** use two terminals — `npm run landing` (port **4173**) for the static GoFamous UI, and `npm run dev` (port **3000**) for the funnel.
 
 ## Tech Stack
 
