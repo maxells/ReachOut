@@ -9,7 +9,7 @@
 import { NextResponse } from "next/server";
 import type { BrandSlice } from "@/lib/store";
 import type { CampaignConfig, Creator, MatchResult } from "@/lib/types";
-import { generateSearchStrategy, scoreAndRankCreators } from "@/lib/clod";
+import { scoreAndRankCreators } from "@/lib/clod";
 import { searchLinkedInPeople } from "@/lib/apify";
 import { MOCK_LINKEDIN_PROFILES } from "@/lib/mock-creators";
 
@@ -41,14 +41,9 @@ export async function POST(req: Request) {
   const input = { brand, campaign };
 
   try {
-    // Step 1: Generate LinkedIn search queries via AI
-    console.log("[match-creators] Step 1: generating search strategy…");
-    const strategy = await generateSearchStrategy(input);
-    console.log("[match-creators] Title searches:", JSON.stringify(strategy.titleSearches));
-
-    // Step 2: Scrape LinkedIn profiles via Apify
-    console.log("[match-creators] Step 2: scraping LinkedIn profiles…");
-    let profiles = await searchLinkedInPeople(strategy.titleSearches, 25);
+    // Step 1: Scrape LinkedIn profiles via Apify, filtering by industry only.
+    console.log(`[match-creators] Step 1: scraping LinkedIn profiles for industry "${brand.industry}"…`);
+    let profiles = await searchLinkedInPeople(brand.industry, 25);
     console.log(`[match-creators] Apify returned ${profiles.length} profile(s)`);
 
     // LinkedIn search-based Apify actors are notoriously unreliable. When they
@@ -63,8 +58,8 @@ export async function POST(req: Request) {
     }
     console.log("[match-creators] First profile:", JSON.stringify(profiles[0]));
 
-    // Step 3: AI scores and ranks the scraped profiles
-    console.log("[match-creators] Step 3: scoring profiles…");
+    // Step 2: AI scores and ranks the scraped profiles
+    console.log("[match-creators] Step 2: scoring profiles…");
     const scored = await scoreAndRankCreators(profiles, input);
     console.log(`[match-creators] Scorer returned ${scored.length} result(s)`);
     const influencers = scored.filter((s) => s.isInfluencer);
@@ -73,7 +68,7 @@ export async function POST(req: Request) {
       console.log("[match-creators] First scored:", JSON.stringify(scored[0]));
     }
 
-    // Step 4: Convert to MatchResult[]
+    // Step 3: Convert to MatchResult[]
     const matches: MatchResult[] = influencers
       .map((s) => {
         const profile = profiles[s.profileIndex];

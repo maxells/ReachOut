@@ -282,6 +282,13 @@
 
   /* ── Init ─────────────────────────────────────────────────── */
   function init() {
+    const noCache = /[?&]nocache=1\b/.test(location.search);
+    if (noCache) {
+      console.log("[Step4] nocache=1 — bypassing cache");
+      localStorage.removeItem(MATCHES_KEY);
+      fetchMatches();
+      return;
+    }
     const cached = loadMatches();
     if (cached.length > 0) {
       console.log("[Step4] Using cached matches (" + cached.length + ")");

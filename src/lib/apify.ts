@@ -36,22 +36,15 @@ interface ApifyRawProfile {
 }
 
 export async function searchLinkedInPeople(
-  titleSearches: string[],
+  industry: string,
   maxResults = 20
 ): Promise<LinkedInProfile[]> {
-  const allProfiles: LinkedInProfile[] = [];
+  const profiles = await runApifyActor(industry, maxResults);
 
-  for (const title of titleSearches) {
-    if (allProfiles.length >= maxResults) break;
-
-    const remaining = maxResults - allProfiles.length;
-    const profiles = await runApifyActor(title, remaining);
-    allProfiles.push(...profiles);
-  }
-
-  // Deduplicate by profileUrl
+  // Deduplicate by profileUrl (defensive — single call shouldn't dup, but
+  // keeps the contract identical for callers iterating over results).
   const seen = new Set<string>();
-  return allProfiles.filter((p) => {
+  return profiles.filter((p) => {
     if (seen.has(p.profileUrl)) return false;
     seen.add(p.profileUrl);
     return true;
@@ -59,11 +52,11 @@ export async function searchLinkedInPeople(
 }
 
 async function runApifyActor(
-  titleKeyword: string,
+  industry: string,
   maxResults: number
 ): Promise<LinkedInProfile[]> {
   const input = {
-    name: titleKeyword,
+    industry,
     maxResults: Math.min(maxResults, 20),
   };
   console.log(`[apify] Starting actor with input:`, JSON.stringify(input));
@@ -121,7 +114,7 @@ async function runApifyActor(
   }
 
   const rawItems: ApifyRawProfile[] = await datasetResponse.json();
-  console.log(`[apify] Title "${titleKeyword}" → ${rawItems.length} raw item(s), run status: ${status}`);
+  console.log(`[apify] Industry "${industry}" → ${rawItems.length} raw item(s), run status: ${status}`);
   if (rawItems.length > 0) {
     console.log("[apify] First raw item keys:", Object.keys(rawItems[0]).join(", "));
     console.log("[apify] First raw item:", JSON.stringify(rawItems[0]).slice(0, 500));
