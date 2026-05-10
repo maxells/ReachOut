@@ -7,6 +7,7 @@
     { href: "/funnel/step1-onboarding", file: "brand.html", title: "Your agent" },
     { href: "/funnel/step2-analysis", file: "mentions.html", title: "Mentions & competitors" },
     { href: "/funnel/step3-campaign", file: "campaign.html", title: "Influencer filters" },
+    { href: "/funnel/step4-matching", file: "matching.html", title: "Creator matching" },
     { href: "/funnel/step5-outreach", file: "outreach.html", title: "Send messages" },
   ];
 
