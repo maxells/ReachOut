@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 type HtmlPageProps = {
-  page: "index" | "brand" | "mentions" | "campaign" | "outreach";
+  page: "index" | "brand" | "mentions" | "campaign" | "matching" | "outreach";
 };
 
 const pageRoutes: Record<string, string> = {
@@ -11,6 +11,7 @@ const pageRoutes: Record<string, string> = {
   "brand.html": "/funnel/step1-onboarding",
   "mentions.html": "/funnel/step2-analysis",
   "campaign.html": "/funnel/step3-campaign",
+  "matching.html": "/funnel/step4-matching",
   "outreach.html": "/funnel/step5-outreach",
 };
 

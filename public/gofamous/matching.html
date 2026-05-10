@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoFamous — Step 4 · Creator matching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="app">
+      <header class="site-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img
+              src="https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778444119/Screenshot_2026-05-10_at_1.07.22_PM_1_Vectorized_1_lbyz7s.png"
+              alt=""
+              width="48"
+              height="48"
+              decoding="async"
+            />
+          </div>
+          <div class="brand-text">
+            <h1>GoFamous</h1>
+            <p>Influencer outreach for AI agent companies</p>
+          </div>
+        </div>
+      </header>
+
+      <nav class="step-flow" aria-label="Workflow steps">
+        <div class="step-flow-inner">
+          <div class="step-dots" id="step-dots">
+            <a href="brand.html" class="step-dot" aria-label="Step 1: Your agent"></a>
+            <a href="mentions.html" class="step-dot" aria-label="Step 2: Mentions & competitors"></a>
+            <a href="campaign.html" class="step-dot" aria-label="Step 3: Influencer filters"></a>
+            <a href="matching.html" class="step-dot" aria-label="Step 4: Creator matching"></a>
+            <a href="outreach.html" class="step-dot" aria-label="Step 5: Send messages"></a>
+          </div>
+          <span class="step-flow-label" id="step-flow-label"></span>
+        </div>
+      </nav>
+
+      <section class="panel" style="margin-top: 1.5rem">
+        <div class="panel-header">
+          <div class="panel-header-copy panel-header-copy--step4">
+            <h2>Matched creators</h2>
+            <p>
+              AI-matched LinkedIn influencers based on your brand profile and campaign parameters.
+            </p>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div id="match-state-loading" class="match-state">
+          <div class="match-state-spinner" aria-hidden="true"></div>
+          <h3>Finding creators</h3>
+          <p>AI is generating search queries and scoring LinkedIn profiles&hellip;</p>
+        </div>
+
+        <!-- Empty state (no results after search) -->
+        <div id="match-state-empty" class="match-state hidden">
+          <h3>No creators matched</h3>
+          <p>Try broadening your follower range or adjusting your campaign keywords.</p>
+          <a href="/funnel/step3-campaign" class="btn btn-secondary btn-sm" style="margin-top: 1.25rem; display: inline-flex">
+            ← Back to filters
+          </a>
+        </div>
+
+        <!-- Results -->
+        <div id="match-results" class="hidden">
+          <p class="match-count" id="match-count"></p>
+          <div class="kol-grid" id="kol-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <div class="step-cta">
+        <a id="step-back" class="btn btn-secondary btn-sm" href="#">← Back</a>
+        <a id="step-continue" class="btn btn-primary btn-sm hidden" href="#">Continue →</a>
+      </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/matching.js"></script>
+    <script src="js/steps.js"></script>
+  </body>
+</html>
