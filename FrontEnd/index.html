@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoFamous — Influencer outreach for AI agents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="landing-page has-landing-splash">
+    <div class="bg-mesh" aria-hidden="true"></div>
+
+    <header class="site-header site-header--landing">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <img
+            src="https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778444119/Screenshot_2026-05-10_at_1.07.22_PM_1_Vectorized_1_lbyz7s.png"
+            alt=""
+            width="48"
+            height="48"
+            decoding="async"
+          />
+        </div>
+        <div class="brand-text">
+          <p class="brand-title">GoFamous</p>
+          <p>Influencer outreach for AI agent companies</p>
+        </div>
+      </div>
+    </header>
+
+    <div id="landing-splash" class="landing-splash">
+      <button type="button" id="landing-skip" class="landing-skip">
+        Skip<span class="landing-skip-hint"> · Esc</span>
+      </button>
+      <div class="landing-splash-inner">
+        <div id="hero-animated" class="hero-animated" aria-live="polite">
+          <h1 class="hero-animated-heading">
+            <span class="hero-animated-line hero-animated-line--primary">
+              <span id="hero-anim-line1"></span><span class="hero-cursor" id="hero-cursor1" aria-hidden="true"></span>
+            </span>
+          </h1>
+          <p class="hero-animated-line hero-animated-line--secondary">
+            <span id="hero-anim-line2"></span><span class="hero-cursor" id="hero-cursor2" aria-hidden="true" hidden></span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="landing-app" class="app landing-app">
+      <div class="landing-main" inert aria-hidden="true">
+        <section class="landing-body" aria-label="Overview">
+          <div class="greet-hero-inner">
+            <p class="greet-lead">
+              Reach out to AI influencers smartly with GoFamous
+            </p>
+
+            <div class="greet-strip">
+              <div class="greet-stat">
+                <span class="greet-stat-num">11×</span>
+                <span class="greet-stat-desc">typical ROI lift vs. cold ads for dev-first products</span>
+              </div>
+              <div class="greet-stat">
+                <span class="greet-stat-num">69%</span>
+                <span class="greet-stat-desc">of buyers trust creator takes over brand-only messaging</span>
+              </div>
+              <div class="greet-stat">
+                <span class="greet-stat-num">0</span>
+                <span class="greet-stat-desc">budget wasted on spray-and-pray impressions — match ICP first</span>
+              </div>
+            </div>
+
+            <p class="greet-foot">
+              <strong>Get started</strong> to walk through your agent, market landscape, budget, and outreach — about four quick steps.
+            </p>
+          </div>
+        </section>
+
+        <div class="landing-cta">
+          <a class="btn btn-primary" href="brand.html">Get started</a>
+        </div>
+
+        <p class="dev-note">
+          Demo only — connect your data in <code>js/common.js</code> and brand fields in <code>js/brand.js</code>.
+        </p>
+      </div>
+    </div>
+
+    <script src="js/landing-hero.js"></script>
+  </body>
+</html>

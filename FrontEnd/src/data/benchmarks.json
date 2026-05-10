@@ -1,0 +1,62 @@
+{
+  "fintech": [
+    { "name": "Stripe", "coverageScore": 92, "creatorTrafficShare": 18.5, "topCreators": 45 },
+    { "name": "Plaid", "coverageScore": 78, "creatorTrafficShare": 12.3, "topCreators": 28 },
+    { "name": "Mercury", "coverageScore": 85, "creatorTrafficShare": 15.1, "topCreators": 35 },
+    { "name": "Ramp", "coverageScore": 80, "creatorTrafficShare": 13.7, "topCreators": 30 }
+  ],
+  "dev-tools": [
+    { "name": "Vercel", "coverageScore": 90, "creatorTrafficShare": 20.2, "topCreators": 52 },
+    { "name": "Supabase", "coverageScore": 88, "creatorTrafficShare": 17.8, "topCreators": 48 },
+    { "name": "Linear", "coverageScore": 75, "creatorTrafficShare": 11.5, "topCreators": 22 },
+    { "name": "Railway", "coverageScore": 70, "creatorTrafficShare": 9.8, "topCreators": 18 }
+  ],
+  "saas": [
+    { "name": "Notion", "coverageScore": 95, "creatorTrafficShare": 22.1, "topCreators": 65 },
+    { "name": "Figma", "coverageScore": 91, "creatorTrafficShare": 19.4, "topCreators": 58 },
+    { "name": "Loom", "coverageScore": 82, "creatorTrafficShare": 14.2, "topCreators": 32 },
+    { "name": "Airtable", "coverageScore": 78, "creatorTrafficShare": 11.8, "topCreators": 25 }
+  ],
+  "ai-ml": [
+    { "name": "OpenAI", "coverageScore": 98, "creatorTrafficShare": 28.5, "topCreators": 120 },
+    { "name": "Anthropic", "coverageScore": 88, "creatorTrafficShare": 16.2, "topCreators": 55 },
+    { "name": "Hugging Face", "coverageScore": 92, "creatorTrafficShare": 21.0, "topCreators": 70 },
+    { "name": "Replicate", "coverageScore": 72, "creatorTrafficShare": 8.5, "topCreators": 20 }
+  ],
+  "e-commerce": [
+    { "name": "Shopify", "coverageScore": 96, "creatorTrafficShare": 25.3, "topCreators": 85 },
+    { "name": "BigCommerce", "coverageScore": 68, "creatorTrafficShare": 8.2, "topCreators": 18 },
+    { "name": "Gorgias", "coverageScore": 72, "creatorTrafficShare": 9.5, "topCreators": 22 },
+    { "name": "Klaviyo", "coverageScore": 80, "creatorTrafficShare": 13.1, "topCreators": 30 }
+  ],
+  "health-tech": [
+    { "name": "Teladoc", "coverageScore": 65, "creatorTrafficShare": 7.8, "topCreators": 15 },
+    { "name": "Hims & Hers", "coverageScore": 82, "creatorTrafficShare": 14.5, "topCreators": 38 },
+    { "name": "Whoop", "coverageScore": 88, "creatorTrafficShare": 18.2, "topCreators": 45 },
+    { "name": "Oura", "coverageScore": 85, "creatorTrafficShare": 16.0, "topCreators": 40 }
+  ],
+  "edtech": [
+    { "name": "Coursera", "coverageScore": 78, "creatorTrafficShare": 12.5, "topCreators": 28 },
+    { "name": "Duolingo", "coverageScore": 92, "creatorTrafficShare": 22.0, "topCreators": 60 },
+    { "name": "Khan Academy", "coverageScore": 85, "creatorTrafficShare": 15.8, "topCreators": 35 },
+    { "name": "Brilliant", "coverageScore": 80, "creatorTrafficShare": 13.2, "topCreators": 30 }
+  ],
+  "cybersecurity": [
+    { "name": "CrowdStrike", "coverageScore": 75, "creatorTrafficShare": 10.5, "topCreators": 20 },
+    { "name": "1Password", "coverageScore": 82, "creatorTrafficShare": 14.8, "topCreators": 35 },
+    { "name": "Snyk", "coverageScore": 78, "creatorTrafficShare": 12.0, "topCreators": 25 },
+    { "name": "Wiz", "coverageScore": 70, "creatorTrafficShare": 8.5, "topCreators": 18 }
+  ],
+  "marketing-tech": [
+    { "name": "HubSpot", "coverageScore": 94, "creatorTrafficShare": 24.5, "topCreators": 75 },
+    { "name": "Mailchimp", "coverageScore": 85, "creatorTrafficShare": 16.2, "topCreators": 40 },
+    { "name": "Semrush", "coverageScore": 80, "creatorTrafficShare": 13.5, "topCreators": 32 },
+    { "name": "Buffer", "coverageScore": 76, "creatorTrafficShare": 10.8, "topCreators": 24 }
+  ],
+  "consumer-apps": [
+    { "name": "Canva", "coverageScore": 93, "creatorTrafficShare": 23.5, "topCreators": 70 },
+    { "name": "Spotify", "coverageScore": 90, "creatorTrafficShare": 20.0, "topCreators": 55 },
+    { "name": "Notion", "coverageScore": 95, "creatorTrafficShare": 22.1, "topCreators": 65 },
+    { "name": "Arc Browser", "coverageScore": 78, "creatorTrafficShare": 12.5, "topCreators": 28 }
+  ]
+}

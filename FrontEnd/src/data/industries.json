@@ -1,0 +1,82 @@
+[
+  {
+    "id": "fintech",
+    "name": "Fintech",
+    "averageCoverageScore": 72,
+    "topChannels": ["youtube", "twitter", "newsletter"],
+    "avgCreatorBudget": 4500,
+    "description": "Financial technology companies including payments, banking, lending, and insurance."
+  },
+  {
+    "id": "dev-tools",
+    "name": "Dev Tools",
+    "averageCoverageScore": 68,
+    "topChannels": ["youtube", "twitter", "newsletter"],
+    "avgCreatorBudget": 3800,
+    "description": "Developer tools, IDEs, APIs, SDKs, and infrastructure platforms."
+  },
+  {
+    "id": "saas",
+    "name": "SaaS",
+    "averageCoverageScore": 65,
+    "topChannels": ["linkedin", "podcast", "youtube"],
+    "avgCreatorBudget": 5000,
+    "description": "Software-as-a-service products for businesses and consumers."
+  },
+  {
+    "id": "ai-ml",
+    "name": "AI / ML",
+    "averageCoverageScore": 78,
+    "topChannels": ["youtube", "twitter", "newsletter"],
+    "avgCreatorBudget": 5500,
+    "description": "Artificial intelligence, machine learning, and data science products."
+  },
+  {
+    "id": "e-commerce",
+    "name": "E-commerce",
+    "averageCoverageScore": 70,
+    "topChannels": ["tiktok", "youtube", "linkedin"],
+    "avgCreatorBudget": 4200,
+    "description": "Online retail platforms, marketplaces, and DTC brands."
+  },
+  {
+    "id": "health-tech",
+    "name": "Health Tech",
+    "averageCoverageScore": 55,
+    "topChannels": ["linkedin", "podcast", "newsletter"],
+    "avgCreatorBudget": 3500,
+    "description": "Digital health, telemedicine, health AI, and medical devices."
+  },
+  {
+    "id": "edtech",
+    "name": "EdTech",
+    "averageCoverageScore": 52,
+    "topChannels": ["tiktok", "youtube", "podcast"],
+    "avgCreatorBudget": 2800,
+    "description": "Educational technology, online learning, and training platforms."
+  },
+  {
+    "id": "cybersecurity",
+    "name": "Cybersecurity",
+    "averageCoverageScore": 60,
+    "topChannels": ["youtube", "podcast", "twitter"],
+    "avgCreatorBudget": 4000,
+    "description": "Security software, services, and infrastructure protection."
+  },
+  {
+    "id": "marketing-tech",
+    "name": "Marketing Tech",
+    "averageCoverageScore": 74,
+    "topChannels": ["linkedin", "podcast", "newsletter"],
+    "avgCreatorBudget": 4800,
+    "description": "Marketing automation, analytics, CRM, and advertising technology."
+  },
+  {
+    "id": "consumer-apps",
+    "name": "Consumer Apps",
+    "averageCoverageScore": 80,
+    "topChannels": ["tiktok", "youtube", "twitter"],
+    "avgCreatorBudget": 5200,
+    "description": "Consumer-facing mobile and web applications."
+  }
+]
