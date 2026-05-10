@@ -1,12 +1,17 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
-import type { BrandInfo } from "./types";
+import type { CampaignConfig } from "./types";
+import type { BrandSlice } from "./store";
+
+export interface MatchInput {
+  brand: BrandSlice;
+  campaign: CampaignConfig;
+}
 
 const clod = createOpenAI({
   baseURL: "https://api.clod.io/v1",
   apiKey: process.env.CLOD_API_KEY!,
-  compatibility: "compatible",
 });
 
 const model = clod.chat("gpt-4o-mini");
@@ -46,8 +51,12 @@ export type ScoredCreator = z.infer<typeof scoredCreatorSchema>;
 // --- Functions ---
 
 export async function generateSearchStrategy(
-  brand: BrandInfo
+  input: MatchInput
 ): Promise<SearchStrategy> {
+  const { brand, campaign } = input;
+  const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry];
+  const [followersMin, followersMax] = campaign.followerRange;
+
   const { object } = await generateObject({
     model,
     schema: searchStrategySchema,
@@ -59,8 +68,8 @@ Do NOT generate generic queries. Think about what actual LinkedIn influencers in
     prompt: `Find LinkedIn influencers matching these criteria:
 
 Industry: ${brand.industry}
-Search Keywords: ${brand.creator_search_keywords.join(", ")}
-Follower Range: ${brand.followers_min} - ${brand.followers_max}
+Search Keywords: ${keywords.join(", ")}
+Follower Range: ${followersMin} - ${followersMax}
 
 Generate LinkedIn search queries that will find real content creators and thought leaders in the "${brand.industry}" industry. Use the search keywords as primary signals. Combine them with industry-specific job titles and roles (e.g. "thought leader", "keynote speaker", "content creator", "newsletter author") to produce effective queries.`,
   });
@@ -81,9 +90,13 @@ export interface LinkedInProfile {
 
 export async function scoreAndRankCreators(
   profiles: LinkedInProfile[],
-  brand: BrandInfo
+  input: MatchInput
 ): Promise<ScoredCreator[]> {
   if (profiles.length === 0) return [];
+
+  const { brand, campaign } = input;
+  const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry];
+  const [followersMin, followersMax] = campaign.followerRange;
 
   const profileSummaries = profiles.map((p, i) => ({
     index: i,
@@ -111,14 +124,14 @@ CRITICAL RULES:
     prompt: `Score these LinkedIn profiles for influencer match.
 
 Industry: ${brand.industry}
-Search Keywords: ${brand.creator_search_keywords.join(", ")}
-Follower Range: ${brand.followers_min} - ${brand.followers_max}
+Search Keywords: ${keywords.join(", ")}
+Follower Range: ${followersMin} - ${followersMax}
 
 Profiles to evaluate:
 ${JSON.stringify(profileSummaries, null, 2)}
 
 Score based on how well each profile aligns with the industry and keywords above.
-Prefer influencers whose connection count falls within the follower range (${brand.followers_min} - ${brand.followers_max}).
+Prefer influencers whose connection count falls within the follower range (${followersMin} - ${followersMax}).
 Return ONLY profiles that are genuine influencers with a matchScore >= 50.
 Maximum 5 results, sorted by score descending.`,
   });

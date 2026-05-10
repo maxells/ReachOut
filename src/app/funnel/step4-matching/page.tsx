@@ -1,35 +1,88 @@
 "use client";
 
+import * as React from "react";
 import { StepLayout } from "@/components/funnel/step-layout";
 import { StepNav } from "@/components/funnel/step-nav";
-
-// =============================================================
-// [Member 2] Step 4: Creator Matching
-// Owner: Member 2 (Scraping)
-//
-// TODO: Display AI-matched creators.
-// - Call /api/match-creators with brand + campaign data from store
-// - Show creator cards with match score, engagement, rate
-// - Show AI "Why" reasoning for each match
-// - Allow user to select/deselect creators
-//
-// Read data: useFunnelStore().brand, useFunnelStore().campaign
-// Write data: useFunnelStore().setMatches()
-// Components go in: src/components/scraping/
-// =============================================================
+import { CreatorList } from "@/components/scraping/creator-list";
+import { useFunnelStore } from "@/lib/store";
+import type { MatchResult } from "@/lib/types";
 
 export default function Step4Matching() {
+  const brand = useFunnelStore((s) => s.brand);
+  const campaign = useFunnelStore((s) => s.campaign);
+  const matches = useFunnelStore((s) => s.matches);
+  const setMatches = useFunnelStore((s) => s.setMatches);
+
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const runMatching = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/match-creators", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brand, campaign }),
+      });
+      const data = (await res.json()) as {
+        matches?: MatchResult[];
+        error?: string;
+      };
+      if (!res.ok) throw new Error(data.error ?? res.statusText);
+      setMatches(data.matches ?? []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [brand, campaign, setMatches]);
+
+  // Auto-run on first mount if no results yet
+  React.useEffect(() => {
+    if (matches.length === 0 && !isLoading) {
+      void runMatching();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <StepLayout
         title="Creator Matching"
         description="AI-matched creators based on your brand profile and campaign parameters."
       >
-        <div className="flex min-h-[300px] items-center justify-center text-muted-foreground">
-          <p>Step 4 creator matches — to be implemented by Member 2</p>
+        <div className="flex flex-col gap-6">
+          {error ? (
+            <div className="border-destructive/40 bg-destructive/5 rounded-lg border p-4">
+              <p className="text-destructive text-sm font-medium">
+                Matching failed
+              </p>
+              <p className="text-muted-foreground mt-1 text-sm">{error}</p>
+              <button
+                type="button"
+                onClick={() => void runMatching()}
+                className="mt-3 rounded border px-3 py-1.5 text-sm"
+              >
+                Retry
+              </button>
+            </div>
+          ) : null}
+          <CreatorList matches={matches} isLoading={isLoading} />
+          {matches.length > 0 && !isLoading ? (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => void runMatching()}
+                className="text-muted-foreground text-sm underline underline-offset-4"
+              >
+                Refresh results
+              </button>
+            </div>
+          ) : null}
         </div>
       </StepLayout>
-      <StepNav />
+      <StepNav disableNext={matches.length === 0} />
     </>
   );
 }

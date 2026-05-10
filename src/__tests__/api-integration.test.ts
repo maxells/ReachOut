@@ -1,24 +1,35 @@
 import { describe, it, expect } from "vitest";
 import { generateSearchStrategy, scoreAndRankCreators } from "@/lib/clod";
-import type { LinkedInProfile } from "@/lib/clod";
-import type { BrandInfo } from "@/lib/types";
+import type { LinkedInProfile, MatchInput } from "@/lib/clod";
 
 const APIFY_BASE_URL = "https://api.apify.com/v2";
 const APIFY_TOKEN = process.env.APIFY_API_TOKEN!;
 const ACTOR_ID = "powerai~linkedin-peoples-search-scraper";
 
-const testBrand: BrandInfo = {
-  industry: "Developer Tools",
-  followers_min: 1000,
-  followers_max: 50000,
-  creator_search_keywords: ["DevOps", "cloud infrastructure", "SaaS"],
+const testInput: MatchInput = {
+  brand: {
+    name: "DevToolsCo",
+    url: "https://devtoolsco.com",
+    industry: "Developer Tools",
+    targetAudience: "Software engineers and DevOps teams",
+    socials: {},
+    hashtags: ["#devops", "#cloud"],
+    keywords: ["DevOps", "cloud infrastructure", "SaaS"],
+    brandAliases: [],
+  },
+  campaign: {
+    budget: 5000,
+    channels: ["linkedin"],
+    followerRange: [1000, 50000],
+    creatorTone: "educator",
+  },
 };
 
 // ─── Test 1: CLōD — generateSearchStrategy ────────────────────────────
 
 describe("CLōD API — generateSearchStrategy", () => {
   it("returns valid search queries, target titles, and keywords", async () => {
-    const strategy = await generateSearchStrategy(testBrand);
+    const strategy = await generateSearchStrategy(testInput);
 
     expect(strategy).toBeDefined();
 
@@ -106,7 +117,7 @@ describe("CLōD API — scoreAndRankCreators", () => {
       },
     ];
 
-    const results = await scoreAndRankCreators(mockProfiles, testBrand);
+    const results = await scoreAndRankCreators(mockProfiles, testInput);
 
     expect(results).toBeInstanceOf(Array);
     expect(results.length).toBeGreaterThan(0);
