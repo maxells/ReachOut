@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoFamous — Step 3 · Influencer filters</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="app">
+      <header class="site-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img
+              src="https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778444119/Screenshot_2026-05-10_at_1.07.22_PM_1_Vectorized_1_lbyz7s.png"
+              alt=""
+              width="48"
+              height="48"
+              decoding="async"
+            />
+          </div>
+          <div class="brand-text">
+            <h1>GoFamous</h1>
+            <p>Influencer outreach for AI agent companies</p>
+          </div>
+        </div>
+      </header>
+
+      <nav class="step-flow" aria-label="Workflow steps">
+        <div class="step-flow-inner">
+          <div class="step-dots" id="step-dots">
+            <a href="brand.html" class="step-dot" aria-label="Step 1: Your agent"></a>
+            <a href="mentions.html" class="step-dot" aria-label="Step 2: Mentions & competitors"></a>
+            <a href="campaign.html" class="step-dot" aria-label="Step 3: Influencer filters"></a>
+            <a href="outreach.html" class="step-dot" aria-label="Step 4: Send messages"></a>
+          </div>
+          <span class="step-flow-label" id="step-flow-label"></span>
+        </div>
+      </nav>
+
+      <section class="panel" style="margin-top: 1.5rem">
+        <div class="panel-header">
+          <div class="panel-header-copy panel-header-copy--step3">
+            <h2>Set influencer filters</h2>
+            <p>
+              Choose channels, industries, and creator keywords. Matching and discovery plug in on the backend.
+            </p>
+          </div>
+        </div>
+
+        <div class="campaign-split">
+          <div>
+            <div class="section-block-ro">
+              <h3>Channels</h3>
+              <div class="pill-grid-ro" id="ch-pills">
+                <button type="button" class="pill-ro on">YouTube</button>
+                <button type="button" class="pill-ro on">X</button>
+                <button type="button" class="pill-ro">TikTok</button>
+                <button type="button" class="pill-ro on">Newsletter</button>
+                <button type="button" class="pill-ro">LinkedIn</button>
+                <button type="button" class="pill-ro">Podcast</button>
+              </div>
+            </div>
+
+            <div class="section-block-ro">
+              <label class="form-label" id="industry-label">Industry</label>
+              <p class="field-hint-ro">Select one or more industries your ideal creators operate in.</p>
+              <div class="cat-grid" id="industry-pills" role="group" aria-labelledby="industry-label">
+                <button type="button" class="cat-pill">Technology</button>
+                <button type="button" class="cat-pill">Software development</button>
+                <button type="button" class="cat-pill">AI</button>
+              </div>
+            </div>
+
+            <div class="section-block-ro">
+              <label class="form-label" for="kw-input">Creator keywords</label>
+              <p class="field-hint-ro">
+                Type traits, topics, or roles — press <strong>Enter</strong> or <strong>,</strong> to add each keyword.
+              </p>
+              <div id="kw-tags" class="kw-tags-ro" aria-live="polite"></div>
+              <input
+                type="text"
+                id="kw-input"
+                class="input-alone"
+                placeholder="e.g. developer advocates, API tutorials, B2B reviews"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="section-block-ro">
+              <h3>Follower range (demo)</h3>
+              <div class="handle-row">
+                <div>
+                  <label class="form-label" for="fol-min">Min</label>
+                  <input type="text" id="fol-min" class="input-alone" value="10,000" readonly />
+                </div>
+                <div>
+                  <label class="form-label" for="fol-max">Max</label>
+                  <input type="text" id="fol-max" class="input-alone" value="200,000" readonly />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="sum-card-ro">
+            <h3>Campaign snapshot</h3>
+            <div class="sum-row-ro"><span>Channels</span><span class="acc" id="sum-ch">—</span></div>
+            <div class="sum-row-ro"><span>Industry</span><span class="acc" id="sum-ind">—</span></div>
+            <div class="sum-row-ro"><span>Creator keywords</span><span class="acc" id="sum-kw">—</span></div>
+            <div class="sum-row-ro"><span>Follower band</span><span class="acc">10k – 200k</span></div>
+            <div class="reach-callout-ro">
+              <div class="reach-label">Est. reach</div>
+              <div class="reach-value" id="est-reach">1.2M</div>
+              <div class="reach-sub" id="est-sub">Targeted impressions</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div class="step-cta">
+        <a id="step-back" class="btn btn-secondary btn-sm" href="#">← Back</a>
+        <a id="step-continue" class="btn btn-primary btn-sm" href="#">Continue →</a>
+      </div>
+
+      <p class="dev-note">Shortlist toggles still use <code>localStorage</code> — same as before.</p>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/campaign.js"></script>
+    <script src="js/steps.js"></script>
+  </body>
+</html>

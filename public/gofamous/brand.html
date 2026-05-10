@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoFamous — Step 1 · Your agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="app">
+      <header class="site-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img
+              src="https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778444119/Screenshot_2026-05-10_at_1.07.22_PM_1_Vectorized_1_lbyz7s.png"
+              alt=""
+              width="48"
+              height="48"
+              decoding="async"
+            />
+          </div>
+          <div class="brand-text">
+            <h1>GoFamous</h1>
+            <p>Influencer outreach for AI agent companies</p>
+          </div>
+        </div>
+      </header>
+
+      <nav class="step-flow" aria-label="Workflow steps">
+        <div class="step-flow-inner">
+          <div class="step-dots" id="step-dots">
+            <a href="brand.html" class="step-dot" aria-label="Step 1: Your agent"></a>
+            <a href="mentions.html" class="step-dot" aria-label="Step 2: Mentions & competitors"></a>
+            <a href="campaign.html" class="step-dot" aria-label="Step 3: Influencer filters"></a>
+            <a href="outreach.html" class="step-dot" aria-label="Step 4: Send messages"></a>
+          </div>
+          <span class="step-flow-label" id="step-flow-label"></span>
+        </div>
+      </nav>
+
+      <section class="panel" style="margin-top: 1.5rem">
+        <div class="panel-header">
+          <div class="panel-header-copy panel-header-copy--step1">
+            <h2>Tell us about your agent</h2>
+            <p>We use this to match tone, spot whitespace vs. competitors, and pick creators who already speak to your buyers.</p>
+          </div>
+        </div>
+
+        <div class="brand-split">
+          <div>
+            <div class="section-block-ro">
+              <label class="form-label" for="url-in">Product / docs URL</label>
+              <div class="input-wrap">
+                <div class="input-prefix">https://</div>
+                <input type="text" id="url-in" placeholder="youragent.dev" autocomplete="url" />
+              </div>
+            </div>
+            <div class="section-block-ro">
+              <label class="form-label" for="name-in">Agent or product name</label>
+              <input type="text" id="name-in" class="input-alone" placeholder="e.g. GoFamous Agent" />
+            </div>
+            <div class="section-block-ro">
+              <label class="form-label" for="agent-desc">What does it do?</label>
+              <textarea id="agent-desc" rows="3" placeholder="One or two sentences — who it’s for and the outcome it drives."></textarea>
+            </div>
+            <div class="section-block-ro">
+              <label class="form-label">Social Channels (optional)</label>
+              <div class="social-channels-ro">
+                <div>
+                  <label class="form-label" for="li-in">LinkedIn profile URL</label>
+                  <input
+                    type="url"
+                    id="li-in"
+                    class="input-alone"
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                    inputmode="url"
+                    autocomplete="url"
+                  />
+                </div>
+                <div class="handle-row">
+                  <div class="input-wrap">
+                    <div class="input-prefix">𝕏</div>
+                    <input type="text" id="tw-in" placeholder="@handle" />
+                  </div>
+                  <div class="input-wrap">
+                    <div class="input-prefix">▶</div>
+                    <input type="text" id="yt-in" placeholder="@channel" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section-block-ro">
+              <label class="form-label">Category</label>
+              <div class="cat-grid">
+                <button type="button" class="cat-pill">AI agents</button>
+                <button type="button" class="cat-pill">Developer tools</button>
+                <button type="button" class="cat-pill">B2B SaaS</button>
+                <button type="button" class="cat-pill">Productivity</button>
+                <button type="button" class="cat-pill">LLM infra</button>
+                <button type="button" class="cat-pill">Automation</button>
+              </div>
+            </div>
+            <div class="section-block-ro">
+              <label class="form-label" id="primary-buyer-label">Primary buyer</label>
+              <div
+                class="cat-grid"
+                role="radiogroup"
+                aria-labelledby="primary-buyer-label"
+              >
+                <button type="button" class="aud-chip" data-aud="1">
+                  Indie / solo builders
+                </button>
+                <button type="button" class="aud-chip selected" data-aud="2">
+                  Seed–Series A teams
+                </button>
+                <button type="button" class="aud-chip" data-aud="3">
+                  Growth-stage product orgs
+                </button>
+                <button type="button" class="aud-chip" data-aud="4">
+                  Enterprise pilot programs
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="brand-preview-card">
+            <p class="form-label" style="margin-bottom: 0.5rem">Live preview</p>
+            <div class="kol-card kol-card--preview-green">
+              <div class="kol-card-top">
+                <div class="avatar" id="pv-av">—</div>
+                <div class="kol-meta">
+                  <h3 id="pv-name">Your agent product</h3>
+                  <p class="kol-handle" id="pv-url">youragent.dev</p>
+                  <div class="kol-tags" id="pv-tags"><span class="tag tag--preview-muted">categories</span></div>
+                </div>
+              </div>
+              <p class="bc-agent-desc" id="pv-desc">
+                Describe what your AI agent does for users — helps match creators who speak that language.
+              </p>
+              <div class="kol-tags kol-tags--handles" id="pv-handles">
+                <span class="tag tag--preview-muted">social handles</span>
+              </div>
+              <div class="kol-stats">
+                <div class="stat">
+                  <div class="stat-val" style="font-size: 0.72rem">ICP</div>
+                  <div class="stat-label">focus</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-val" id="pv-aud" style="font-size: 0.72rem">Seed–Series A teams</div>
+                  <div class="stat-label">buyer</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-val">AI</div>
+                  <div class="stat-label">space</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div class="step-cta">
+        <a id="step-back" class="btn btn-secondary btn-sm" href="#">← Back</a>
+        <a id="step-continue" class="btn btn-primary btn-sm" href="#">Continue →</a>
+      </div>
+
+      <p class="dev-note">Saved locally as <code>reachout_brand_v1</code> for the outreach step.</p>
+    </div>
+
+    <script src="js/brand.js"></script>
+    <script src="js/steps.js"></script>
+  </body>
+</html>
