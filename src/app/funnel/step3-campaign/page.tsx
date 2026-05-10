@@ -19,7 +19,7 @@ export default function Step3Campaign() {
     <>
       <StepLayout
         title="Campaign Setup"
-        description="Define your budget, target channels, and the type of creators you want to work with."
+        description="Define target channels and the type of creators you want to work with."
       >
         <CampaignSetupForm />
       </StepLayout>

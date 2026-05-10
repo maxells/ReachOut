@@ -6,7 +6,7 @@
   const STEPS = [
     { href: "brand.html", title: "Your agent" },
     { href: "mentions.html", title: "Mentions & competitors" },
-    { href: "campaign.html", title: "Budget & filters" },
+    { href: "campaign.html", title: "Influencer filters" },
     { href: "outreach.html", title: "Send messages" },
   ];
 

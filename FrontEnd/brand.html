@@ -39,7 +39,7 @@
           <div class="step-dots" id="step-dots">
             <a href="brand.html" class="step-dot" aria-label="Step 1: Your agent"></a>
             <a href="mentions.html" class="step-dot" aria-label="Step 2: Mentions & competitors"></a>
-            <a href="campaign.html" class="step-dot" aria-label="Step 3: Budget & filters"></a>
+            <a href="campaign.html" class="step-dot" aria-label="Step 3: Influencer filters"></a>
             <a href="outreach.html" class="step-dot" aria-label="Step 4: Send messages"></a>
           </div>
           <span class="step-flow-label" id="step-flow-label"></span>
@@ -48,7 +48,7 @@
 
       <section class="panel" style="margin-top: 1.5rem">
         <div class="panel-header">
-          <div>
+          <div class="panel-header-copy panel-header-copy--step1">
             <h2>Tell us about your agent</h2>
             <p>We use this to match tone, spot whitespace vs. competitors, and pick creators who already speak to your buyers.</p>
           </div>
@@ -72,15 +72,28 @@
               <textarea id="agent-desc" rows="3" placeholder="One or two sentences — who it’s for and the outcome it drives."></textarea>
             </div>
             <div class="section-block-ro">
-              <label class="form-label">Social proof (optional)</label>
-              <div class="handle-row">
-                <div class="input-wrap">
-                  <div class="input-prefix">𝕏</div>
-                  <input type="text" id="tw-in" placeholder="@handle" />
+              <label class="form-label">Social Channels (optional)</label>
+              <div class="social-channels-ro">
+                <div>
+                  <label class="form-label" for="li-in">LinkedIn profile URL</label>
+                  <input
+                    type="url"
+                    id="li-in"
+                    class="input-alone"
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                    inputmode="url"
+                    autocomplete="url"
+                  />
                 </div>
-                <div class="input-wrap">
-                  <div class="input-prefix">▶</div>
-                  <input type="text" id="yt-in" placeholder="@channel" />
+                <div class="handle-row">
+                  <div class="input-wrap">
+                    <div class="input-prefix">𝕏</div>
+                    <input type="text" id="tw-in" placeholder="@handle" />
+                  </div>
+                  <div class="input-wrap">
+                    <div class="input-prefix">▶</div>
+                    <input type="text" id="yt-in" placeholder="@channel" />
+                  </div>
                 </div>
               </div>
             </div>

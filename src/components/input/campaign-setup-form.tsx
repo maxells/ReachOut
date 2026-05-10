@@ -1,9 +1,6 @@
 "use client";
 
 import {
-  CAMPAIGN_BUDGET_MAX,
-  CAMPAIGN_BUDGET_MIN,
-  CAMPAIGN_BUDGET_STEP,
   CHANNEL_OPTIONS,
   CREATOR_TONE_OPTIONS,
   FOLLOWER_RANGE_MAX,
@@ -13,11 +10,7 @@ import {
 } from "@/lib/constants";
 import { useFunnelStore } from "@/lib/store";
 import type { ChannelType } from "@/lib/types";
-import {
-  cn,
-  formatFollowerCount,
-  formatUsd,
-} from "@/lib/utils";
+import { cn, formatFollowerCount } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -52,37 +45,6 @@ export function CampaignSetupForm() {
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="grid gap-4">
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <div>
-            <h3 className="text-sm font-medium">Campaign budget</h3>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Total planned spend for creator partnerships (USD).
-            </p>
-          </div>
-          <p className="text-lg font-semibold tabular-nums">
-            {formatUsd(campaign.budget)}
-          </p>
-        </div>
-        <Slider
-          min={CAMPAIGN_BUDGET_MIN}
-          max={CAMPAIGN_BUDGET_MAX}
-          step={CAMPAIGN_BUDGET_STEP}
-          value={[campaign.budget]}
-          onValueChange={(v) => {
-            const arr = asSliderArray(v);
-            const n = arr[0];
-            if (typeof n === "number") setCampaign({ budget: n });
-          }}
-        />
-        <div className="text-muted-foreground flex justify-between text-xs">
-          <span>{formatUsd(CAMPAIGN_BUDGET_MIN)}</span>
-          <span>{formatUsd(CAMPAIGN_BUDGET_MAX)}</span>
-        </div>
-      </section>
-
-      <Separator />
-
       <section className="grid gap-3">
         <div>
           <h3 className="text-sm font-medium">Channels</h3>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GoFamous — Step 3 · Budget & filters</title>
+    <title>GoFamous — Step 3 · Influencer filters</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
@@ -39,7 +39,7 @@
           <div class="step-dots" id="step-dots">
             <a href="brand.html" class="step-dot" aria-label="Step 1: Your agent"></a>
             <a href="mentions.html" class="step-dot" aria-label="Step 2: Mentions & competitors"></a>
-            <a href="campaign.html" class="step-dot" aria-label="Step 3: Budget & filters"></a>
+            <a href="campaign.html" class="step-dot" aria-label="Step 3: Influencer filters"></a>
             <a href="outreach.html" class="step-dot" aria-label="Step 4: Send messages"></a>
           </div>
           <span class="step-flow-label" id="step-flow-label"></span>
@@ -48,29 +48,16 @@
 
       <section class="panel" style="margin-top: 1.5rem">
         <div class="panel-header">
-          <div>
-            <h2>Set budget & influencer filters</h2>
-            <p>Tune spend and channels, then search mock creators. Backend will plug in real discovery + pricing.</p>
+          <div class="panel-header-copy panel-header-copy--step3">
+            <h2>Set influencer filters</h2>
+            <p>
+              Choose channels, industries, and creator keywords. Matching and discovery plug in on the backend.
+            </p>
           </div>
         </div>
 
         <div class="campaign-split">
           <div>
-            <div class="section-block-ro">
-              <h3>Total campaign budget</h3>
-              <div class="budget-well-ro">
-                <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.75rem">
-                  <span class="budget-num-ro" id="bgt-display">$5,000</span>
-                  <span style="font-size: 0.85rem; color: var(--text-muted)">total</span>
-                </div>
-                <input type="range" id="bgt-slider" min="1" max="10" step="1" value="5" />
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); margin-top: 0.35rem">
-                  <span>$1k</span><span>$5k</span><span>$10k+</span>
-                </div>
-                <p class="budget-note-ro" id="bgt-note"></p>
-              </div>
-            </div>
-
             <div class="section-block-ro">
               <h3>Channels</h3>
               <div class="pill-grid-ro" id="ch-pills">
@@ -81,6 +68,31 @@
                 <button type="button" class="pill-ro">LinkedIn</button>
                 <button type="button" class="pill-ro">Podcast</button>
               </div>
+            </div>
+
+            <div class="section-block-ro">
+              <label class="form-label" id="industry-label">Industry</label>
+              <p class="field-hint-ro">Select one or more industries your ideal creators operate in.</p>
+              <div class="cat-grid" id="industry-pills" role="group" aria-labelledby="industry-label">
+                <button type="button" class="cat-pill">Technology</button>
+                <button type="button" class="cat-pill">Software development</button>
+                <button type="button" class="cat-pill">AI</button>
+              </div>
+            </div>
+
+            <div class="section-block-ro">
+              <label class="form-label" for="kw-input">Creator keywords</label>
+              <p class="field-hint-ro">
+                Type traits, topics, or roles — press <strong>Enter</strong> or <strong>,</strong> to add each keyword.
+              </p>
+              <div id="kw-tags" class="kw-tags-ro" aria-live="polite"></div>
+              <input
+                type="text"
+                id="kw-input"
+                class="input-alone"
+                placeholder="e.g. developer advocates, API tutorials, B2B reviews"
+                autocomplete="off"
+              />
             </div>
 
             <div class="section-block-ro">
@@ -96,36 +108,14 @@
                 </div>
               </div>
             </div>
-
-            <div class="section-block-ro">
-              <h3>Find creators</h3>
-              <div class="toolbar">
-                <div class="search-wrap">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="M21 21l-4.3-4.3" />
-                  </svg>
-                  <input type="search" id="search-kols" placeholder="Search name, niche, tags…" autocomplete="off" />
-                </div>
-                <select id="filter-platform" aria-label="Filter by platform">
-                  <option value="all">All platforms</option>
-                  <option value="X">X</option>
-                  <option value="YouTube">YouTube</option>
-                  <option value="LinkedIn">LinkedIn</option>
-                  <option value="TikTok">TikTok</option>
-                  <option value="Newsletter">Newsletter</option>
-                </select>
-              </div>
-              <div class="card-grid" id="kol-grid" style="margin-top: 1rem"></div>
-            </div>
           </div>
 
           <aside class="sum-card-ro">
             <h3>Campaign snapshot</h3>
-            <div class="sum-row-ro"><span>Budget</span><span class="acc" id="sum-bgt">$5,000</span></div>
             <div class="sum-row-ro"><span>Channels</span><span class="acc" id="sum-ch">—</span></div>
+            <div class="sum-row-ro"><span>Industry</span><span class="acc" id="sum-ind">—</span></div>
+            <div class="sum-row-ro"><span>Creator keywords</span><span class="acc" id="sum-kw">—</span></div>
             <div class="sum-row-ro"><span>Follower band</span><span class="acc">10k – 200k</span></div>
-            <div class="sum-row-ro"><span>Est. creators</span><span class="acc" id="sum-creators">4–6</span></div>
             <div class="reach-callout-ro">
               <div class="reach-label">Est. reach</div>
               <div class="reach-value" id="est-reach">1.2M</div>

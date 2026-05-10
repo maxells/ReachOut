@@ -444,6 +444,64 @@ a.step-dot[aria-current="page"] {
   line-height: 1.55;
 }
 
+/* Step hero: title + description over full-bleed Cloudinary art */
+.panel-header-copy {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  padding: 1.1rem 1.5rem 1.25rem;
+  min-height: clamp(8rem, 22vw, 11.5rem);
+  background-color: #141414;
+  background-size: cover;
+  background-position: center;
+  border: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-hard);
+}
+
+.panel-header-copy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.5) 48%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.panel-header-copy h2,
+.panel-header-copy p {
+  position: relative;
+  z-index: 1;
+  max-width: min(52ch, 100%);
+}
+
+.panel-header-copy h2 {
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.panel-header-copy p {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+.panel-header-copy--step1 {
+  background-image: url("https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778449356/image_1_1_ime4hw.png");
+}
+
+.panel-header-copy--step2 {
+  background-image: url("https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778449359/image_4_k1eltt.png");
+}
+
+.panel-header-copy--step3 {
+  background-image: url("https://res.cloudinary.com/dlzvz9qj8/image/upload/v1778449361/image_5_ozfiky.png");
+}
+
 .hidden {
   display: none !important;
 }
@@ -474,6 +532,8 @@ a.step-dot[aria-current="page"] {
 
 input[type="search"],
 input[type="text"],
+input[type="url"],
+input[type="email"],
 select,
 textarea {
   font-family: inherit;
@@ -485,7 +545,9 @@ textarea {
   border-radius: var(--radius-sm);
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="url"],
+input[type="email"] {
   width: 100%;
   padding: 0.65rem 1rem;
 }
@@ -496,7 +558,9 @@ input[type="search"] {
 }
 
 input[type="search"]::placeholder,
-input[type="text"]::placeholder {
+input[type="text"]::placeholder,
+input[type="url"]::placeholder,
+input[type="email"]::placeholder {
   color: var(--text-muted);
 }
 
@@ -1870,4 +1934,66 @@ body.landing-page .site-header--landing .brand-text p {
   font-weight: 600;
   letter-spacing: normal;
   text-transform: none;
+}
+
+.social-channels-ro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.field-hint-ro {
+  margin: -0.15rem 0 0.65rem;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.45;
+  max-width: 52ch;
+}
+
+.field-hint-ro strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.kw-tags-ro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+  min-height: 0;
+}
+
+.kw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.45rem 0.35rem 0.75rem;
+  border-radius: var(--pill);
+  background: var(--accent-soft);
+  border: var(--border-width) solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.kw-chip-remove {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.kw-chip-remove:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text);
 }

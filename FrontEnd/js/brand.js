@@ -32,11 +32,28 @@ function getSelectedAud() {
   return sel ? sel.getAttribute("data-aud") : "2";
 }
 
+function previewLinkedInLabel(raw) {
+  const s = raw.trim();
+  if (!s) return "";
+  try {
+    const href = s.startsWith("http") ? s : `https://${s}`;
+    const u = new URL(href);
+    const host = u.hostname.replace(/^www\./, "");
+    const path = u.pathname.replace(/\/$/, "") || "/";
+    const tail = path.length > 28 ? path.slice(0, 26) + "…" : path;
+    return `${host}${tail}`;
+  } catch {
+    const t = s.length > 40 ? s.slice(0, 38) + "…" : s;
+    return t;
+  }
+}
+
 function gatherForm() {
   return {
     url: $("#url-in").value.trim(),
     name: $("#name-in").value.trim(),
     agentDesc: $("#agent-desc").value.trim(),
+    li: $("#li-in").value.trim(),
     tw: $("#tw-in").value.trim(),
     yt: $("#yt-in").value.trim(),
     aud: getSelectedAud(),
@@ -53,6 +70,7 @@ function applyToPreview() {
   $("#pv-aud").textContent = AUD_LABELS[d.aud] || AUD_LABELS[2];
 
   const handles = [];
+  if (d.li) handles.push({ c: "#0a66c2", l: previewLinkedInLabel(d.li) });
   if (d.tw) handles.push({ c: "#1da1f2", l: d.tw.startsWith("@") ? d.tw : "@" + d.tw });
   if (d.yt) handles.push({ c: "#ff4d4d", l: d.yt.startsWith("@") ? d.yt : "@" + d.yt });
   const hEl = $("#pv-handles");
@@ -116,6 +134,7 @@ function hydrate() {
   if (d.url) $("#url-in").value = d.url;
   if (d.name) $("#name-in").value = d.name;
   if (d.agentDesc) $("#agent-desc").value = d.agentDesc;
+  if (d.li) $("#li-in").value = d.li;
   if (d.tw) $("#tw-in").value = d.tw;
   if (d.yt) $("#yt-in").value = d.yt;
   const audKey = d.aud != null && d.aud !== "" ? String(d.aud) : "2";
@@ -143,7 +162,7 @@ function hydrate() {
 }
 
 function wire() {
-  ["url-in", "name-in", "agent-desc", "tw-in", "yt-in"].forEach((id) => {
+  ["url-in", "name-in", "agent-desc", "li-in", "tw-in", "yt-in"].forEach((id) => {
     $(`#${id}`).addEventListener("input", applyToPreview);
   });
   bindAudChips();
