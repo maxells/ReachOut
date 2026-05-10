@@ -1,0 +1,44 @@
+---
+description: 3-member parallel development plan — file ownership, module boundaries, and no-conflict rules
+alwaysApply: true
+---
+
+# ReachOut — 3-Member Parallel Dev Architecture
+
+## Module Ownership
+
+| Member | Module | Owns |
+|--------|--------|------|
+| Member 1 | Input | `src/app/funnel/step1-onboarding/`, `step2-analysis/`, `step3-campaign/`, `src/components/input/`, `src/app/api/analyze-brand/` |
+| Member 2 | Scraping | `src/app/funnel/step4-matching/`, `src/components/scraping/`, `src/app/api/match-creators/`, `src/lib/creators.ts`, `src/data/` |
+| Member 3 | Outreach | `src/app/funnel/step5-outreach/`, `src/components/outreach/`, `src/app/api/generate-pitch/`, `src/app/api/send-outreach/`, `src/lib/outreach.ts` |
+
+## Shared Files (treat as read-only, append only)
+
+- `src/lib/types.ts` — frozen; add new types inside your own module instead
+- `src/lib/store.ts` — frozen; only touch your own slice
+- `src/lib/constants.ts`, `src/lib/utils.ts` — append new exports only, never modify existing ones
+- `src/components/ui/` — add via `npx shadcn@latest add <component>`, never edit manually
+- `src/app/layout.tsx`, `src/app/globals.css`, `src/app/funnel/layout.tsx` — do not touch
+
+## Conflict-Prevention Rules
+
+1. **Never edit files outside your module folder.**
+2. Shared files: add only, never modify existing exports.
+3. Local types go in your own module, not in `types.ts`.
+4. Each member works on their own branch: `feat/input`, `feat/scraping`, `feat/outreach`; rebase onto main regularly.
+
+## Zustand Store Contract
+
+```typescript
+// Member 1 writes → Member 2 reads
+brand: BrandInfo;      setBrand(...)
+campaign: CampaignConfig; setCampaign(...)
+
+// Member 2 writes → Member 1 (step2) + Member 3 read
+analysis: AnalysisReport | null;  setAnalysis(...)
+matches: MatchResult[];           setMatches(...)
+
+// Member 3 writes only
+outreach: OutreachState;  setOutreach(...)
+```
