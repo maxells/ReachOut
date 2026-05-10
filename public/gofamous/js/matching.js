@@ -1,21 +1,96 @@
 /**
  * GoFamous — Step 4: Creator Matching
- * Reads MatchResult[] from the Zustand persisted store (gofamous-funnel)
- * and renders creator cards using the shared CSS design system.
+ *
+ * Reads brand data from reachout_brand_v1 (written by brand.js in step 1)
+ * and campaign data from gofamous_campaign_v1 (written by campaign.js in step 3).
+ * Sends to /api/match-creators, then renders kol-cards using the shared CSS.
+ * Results are cached in gofamous_matches_v1.
  */
 (function () {
-  const FUNNEL_STORE_KEY = "gofamous-funnel";
+  const BRAND_KEY = "reachout_brand_v1";
+  const CAMPAIGN_KEY = "gofamous_campaign_v1";
+  const MATCHES_KEY = "gofamous_matches_v1";
 
-  /* ── Read store from localStorage ─────────────────────────── */
+  /* ── Read cached matches ──────────────────────────────────── */
   function loadMatches() {
     try {
-      const raw = localStorage.getItem(FUNNEL_STORE_KEY);
+      const raw = localStorage.getItem(MATCHES_KEY);
       if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return parsed?.state?.matches ?? [];
+      return JSON.parse(raw);
     } catch {
       return [];
     }
+  }
+
+  function saveMatches(matches) {
+    localStorage.setItem(MATCHES_KEY, JSON.stringify(matches));
+  }
+
+  /* ── Build API payload from HTML localStorage keys ────────── */
+  function buildPayload() {
+    let brandRaw = {};
+    let campaignRaw = {};
+    try {
+      const b = localStorage.getItem(BRAND_KEY);
+      if (b) brandRaw = JSON.parse(b);
+    } catch { /* ignore */ }
+    try {
+      const c = localStorage.getItem(CAMPAIGN_KEY);
+      if (c) campaignRaw = JSON.parse(c);
+    } catch { /* ignore */ }
+
+    // Map HTML fields → API BrandSlice shape
+    const industry =
+      (campaignRaw.industries && campaignRaw.industries[0]) ||
+      (brandRaw.categories && brandRaw.categories[0]) ||
+      "";
+    const keywords = campaignRaw.keywords || [];
+    const brand = {
+      name: brandRaw.name || "",
+      url: brandRaw.url || "",
+      industry: industry,
+      targetAudience: "",
+      socials: {
+        linkedin: brandRaw.li || undefined,
+        twitter: brandRaw.tw || undefined,
+        youtube: brandRaw.yt || undefined,
+      },
+      hashtags: [],
+      keywords: keywords,
+      brandAliases: [],
+    };
+
+    // Map HTML fields → API CampaignConfig shape
+    const channelMap = {
+      YouTube: "youtube",
+      X: "twitter",
+      TikTok: "tiktok",
+      Newsletter: "newsletter",
+      LinkedIn: "linkedin",
+      Podcast: "podcast",
+    };
+    const channels = (campaignRaw.channels || []).map(
+      (ch) => channelMap[ch] || ch.toLowerCase()
+    );
+
+    // Read follower range from the DOM inputs (they are in campaign.html)
+    let folMin = 10000;
+    let folMax = 200000;
+    try {
+      const minEl = document.getElementById("fol-min");
+      const maxEl = document.getElementById("fol-max");
+      if (minEl) folMin = parseInt(minEl.value.replace(/,/g, ""), 10) || 10000;
+      if (maxEl) folMax = parseInt(maxEl.value.replace(/,/g, ""), 10) || 200000;
+    } catch { /* use defaults */ }
+
+    const campaign = {
+      budget: 5000,
+      channels: channels,
+      followerRange: [folMin, folMax],
+      creatorTone: "educator",
+    };
+
+    return { brand, campaign };
   }
 
   /* ── Format numbers ───────────────────────────────────────── */
@@ -125,35 +200,31 @@
     if (el) el.classList.add("hidden");
   }
 
-  /* ── Main render ──────────────────────────────────────────── */
-  function render() {
-    const matches = loadMatches();
-
-    console.group("[Step4 matching.js] Creator matching results");
-    console.log(`Loaded ${matches.length} match(es) from localStorage`);
-    matches.forEach((m, i) => {
-      console.log(
-        `  [${i + 1}] ${m.creator.name} | score: ${m.matchScore} | followers: ${m.creator.followers}`
-      );
-      console.log(`       reason: ${m.reasoning}`);
-      console.log(`       niche: ${(m.creator.niche || []).join(", ")}`);
-    });
-    console.groupEnd();
-
+  /* ── Render cached results ────────────────────────────────── */
+  function render(matches) {
     hide("match-state-loading");
+    hide("match-state-empty");
 
-    if (matches.length === 0) {
+    if (!matches || matches.length === 0) {
       show("match-state-empty");
       return;
     }
 
-    // Render count label
+    console.group("[Step4] Influencer results");
+    matches.forEach((m, i) => {
+      console.log(
+        `[${i + 1}] ${m.creator.name} | score: ${m.matchScore} | followers: ${m.creator.followers} | handle: ${m.creator.handle}`
+      );
+      console.log(`     reason: ${m.reasoning}`);
+      console.log(`     niche: ${(m.creator.niche || []).join(", ")}`);
+    });
+    console.groupEnd();
+
     const countEl = document.getElementById("match-count");
     if (countEl) {
       countEl.textContent = `Found ${matches.length} matching influencer${matches.length !== 1 ? "s" : ""}`;
     }
 
-    // Render cards
     const grid = document.getElementById("kol-grid");
     if (grid) {
       grid.innerHTML = matches.map(renderCard).join("");
@@ -162,29 +233,21 @@
 
     show("match-results");
 
-    // Reveal Continue button (steps.js manages its href)
     const continueBtn = document.getElementById("step-continue");
     if (continueBtn) continueBtn.classList.remove("hidden");
   }
 
-  /* ── If no matches yet: trigger API fetch then re-render ──── */
-  function maybeFetch() {
-    const matches = loadMatches();
-    if (matches.length > 0) return; // already have data
+  /* ── Fetch from API ───────────────────────────────────────── */
+  function fetchMatches() {
+    const payload = buildPayload();
 
-    // Read brand + campaign from store
-    let brand, campaign;
-    try {
-      const raw = localStorage.getItem("gofamous-funnel");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        brand = parsed?.state?.brand;
-        campaign = parsed?.state?.campaign;
-      }
-    } catch { /* ignore */ }
+    console.group("[Step4] Calling /api/match-creators");
+    console.log("brand:", payload.brand);
+    console.log("campaign:", payload.campaign);
+    console.groupEnd();
 
-    if (!brand?.name || !brand?.industry) {
-      // No brand data yet — nothing to fetch
+    if (!payload.brand.name && !payload.brand.industry) {
+      console.warn("[Step4] No brand data found — please complete step 1 and step 3 first");
       hide("match-state-loading");
       show("match-state-empty");
       return;
@@ -193,26 +256,25 @@
     fetch("/api/match-creators", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brand, campaign }),
+      body: JSON.stringify(payload),
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.matches && data.matches.length > 0) {
-          // Persist into Zustand store slice via localStorage
-          try {
-            const raw = localStorage.getItem("gofamous-funnel");
-            const parsed = raw ? JSON.parse(raw) : { state: {} };
-            parsed.state.matches = data.matches;
-            localStorage.setItem("gofamous-funnel", JSON.stringify(parsed));
-          } catch { /* ignore */ }
-          render();
-        } else {
+        if (data.error) {
+          console.error("[Step4] API returned error:", data.error);
           hide("match-state-loading");
           show("match-state-empty");
+          return;
         }
+        const matches = data.matches || [];
+        console.log(`[Step4] API returned ${matches.length} match(es)`);
+        if (matches.length > 0) {
+          saveMatches(matches);
+        }
+        render(matches);
       })
       .catch((err) => {
-        console.error("[Step4] API error:", err);
+        console.error("[Step4] API fetch failed:", err);
         hide("match-state-loading");
         show("match-state-empty");
       });
@@ -220,11 +282,12 @@
 
   /* ── Init ─────────────────────────────────────────────────── */
   function init() {
-    const matches = loadMatches();
-    if (matches.length > 0) {
-      render();
+    const cached = loadMatches();
+    if (cached.length > 0) {
+      console.log("[Step4] Using cached matches (" + cached.length + ")");
+      render(cached);
     } else {
-      maybeFetch();
+      fetchMatches();
     }
   }
 
