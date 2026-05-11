@@ -2,13 +2,16 @@
  * Bridges Member 1's static HTML funnel (localStorage) into the match-creators
  * API payload when the React funnel's Zustand slice is empty.
  *
- * Keys: reachout_brand_v1 / gofamous_campaign_v1 (written by brand.js / campaign.js)
+ * Keys:
+ * - reachout_brand_v1 / gofamous_campaign_v1 (brand.js / campaign.js)
+ * - gofamous_matches_v1 (matching.js — cached API results)
  */
-import type { CampaignConfig } from "@/lib/types";
+import type { CampaignConfig, MatchResult } from "@/lib/types";
 import type { BrandSlice } from "@/lib/store";
 
 const BRAND_LS = "reachout_brand_v1";
 const CAMPAIGN_LS = "gofamous_campaign_v1";
+export const HTML_FUNNEL_MATCHES_LS_KEY = "gofamous_matches_v1";
 
 interface HtmlBrandRaw {
   name?: string;
@@ -144,4 +147,42 @@ export function mergeMatchPayloadFromHtmlStorage(
   };
 
   return { brand, campaign };
+}
+
+function isLooseMatchRow(m: unknown): m is MatchResult {
+  if (typeof m !== "object" || m === null) return false;
+  const row = m as Record<string, unknown>;
+  const c = row.creator;
+  if (typeof c !== "object" || c === null) return false;
+  const id = (c as Record<string, unknown>).id;
+  return typeof id === "string" && id.length > 0;
+}
+
+/**
+ * Reads Step 4 HTML funnel cache (`matching.js`) when Zustand `matches` is empty.
+ */
+export function readHtmlMatchesCache(): MatchResult[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(HTML_FUNNEL_MATCHES_LS_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    let arr: unknown[] = [];
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      !Array.isArray(parsed) &&
+      Array.isArray((parsed as { matches?: unknown }).matches)
+    ) {
+      arr = (parsed as { matches: unknown[] }).matches;
+    } else if (Array.isArray(parsed)) {
+      arr = parsed;
+    } else {
+      return null;
+    }
+    const out = arr.filter(isLooseMatchRow);
+    return out.length > 0 ? out : null;
+  } catch {
+    return null;
+  }
 }

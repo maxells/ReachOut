@@ -5,12 +5,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { PitchGeneratingOverlay } from "@/components/outreach/pitch-generating-overlay";
+import {
+  mergeMatchPayloadFromHtmlStorage,
+  readHtmlMatchesCache,
+} from "@/lib/html-funnel-match-payload";
 import { STEP5_ENTRY_GATE_KEY } from "@/lib/outreach-session-hydrate";
 import { useFunnelStore } from "@/lib/store";
 
 /**
  * Land here before the main Step 5 page: wait for persisted store, then continue
- * only when steps 1–4 left brand, campaign, and matches in the store.
+ * when steps 1–4 left brand, campaign, and matches — including static HTML funnel
+ * keys in localStorage (`gofamous_matches_v1`, etc.) bridged into Zustand.
  */
 export default function Step5OutreachPreparePage() {
   const router = useRouter();
@@ -26,11 +31,23 @@ export default function Step5OutreachPreparePage() {
     };
 
     const run = () => {
-      const { matches, brand, campaign } = useFunnelStore.getState();
+      const { setBrand, setCampaign, setMatches } = useFunnelStore.getState();
+      let { matches, brand, campaign } = useFunnelStore.getState();
+
+      const htmlMatches = readHtmlMatchesCache();
+      if (htmlMatches && matches.length === 0) {
+        setMatches(htmlMatches);
+        matches = htmlMatches;
+      }
+
+      const merged = mergeMatchPayloadFromHtmlStorage(brand, campaign);
+      setBrand(merged.brand);
+      setCampaign(merged.campaign);
+
       const hasFunnelData =
         matches.length > 0 &&
-        Boolean(brand.name?.trim()) &&
-        campaign.channels.length > 0;
+        Boolean(merged.brand.name?.trim()) &&
+        merged.campaign.channels.length > 0;
 
       if (hasFunnelData) {
         goToOutreach();
