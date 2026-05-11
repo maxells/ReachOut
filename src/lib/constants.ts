@@ -33,6 +33,9 @@ export const FUNNEL_STEPS: StepConfig[] = [
   },
 ];
 
+/** Temporary E2E entry: loads bundled outreach fixture then redirects (see `funnel/e2e-session/page.tsx`). */
+export const E2E_OUTREACH_BOOTSTRAP_PATH = "/funnel/e2e-session";
+
 export const CHANNEL_OPTIONS: { value: ChannelType; label: string }[] = [
   { value: "youtube", label: "YouTube" },
   { value: "twitter", label: "Twitter / X" },
