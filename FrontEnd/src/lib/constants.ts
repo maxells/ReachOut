@@ -29,7 +29,7 @@ export const FUNNEL_STEPS: StepConfig[] = [
     id: 5,
     title: "Outreach",
     description: "Launch your campaign",
-    path: "/funnel/step5-outreach",
+    path: "/funnel/step5-outreach/prepare",
   },
 ];
 

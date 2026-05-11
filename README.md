@@ -122,7 +122,7 @@ Tasks:
 - Build outreach status tracking
 - Implement `/api/generate-pitch` and `/api/send-outreach` endpoints
 
-**Reads from store**: `matches`, `brand`
+**Reads from store**: `brand`, `campaign`, `matches`, `analysis` (optional grounding for pitch prompt)
 **Writes to store**: `outreach`
 
 ## Development Rules (Avoid Merge Conflicts)
@@ -142,6 +142,27 @@ Member 1 writes: brand, campaign    → Member 2 reads these
 Member 2 writes: analysis, matches  → Member 1 reads analysis (step2), Member 3 reads matches
 Member 3 writes: outreach           → No other module reads this
 ```
+
+### `POST /api/generate-pitch` request body
+
+Matches `PitchGenerationRequest` in `src/lib/outreach.ts`. Required: **`brand`**, **`campaign`**, **`match`**, **`channel`**. Optional fields improve prompt grounding.
+
+| Field | Required | Typical source |
+| ----- | -------- | -------------- |
+| `brand` | ✓ | `BrandInfo`; store slice uses `brandSliceToPitchBrand` to include optional `followers_min`, `followers_max`, `creator_search_keywords` |
+| `campaign` | ✓ | `CampaignConfig` — budget, channels, followerRange, creatorTone |
+| `match` | ✓ | `MatchResult` from Step 4 |
+| `channel` | ✓ | `linkedin` \| `email` \| `reddit` \| `youtube` |
+| `productDescription` | | Value prop / audience / industry fallback |
+| `brandVoice` | | Override; prompt defaults to `campaign.creatorTone` |
+| `outreachGoal` | | Often derived from collaboration type |
+| `callToAction` | | Often includes sender name |
+| `hashtags`, `keywords`, `brandAliases` | | From `BrandSlice` when non-empty |
+| `marketAnalysisSummary` | | `analysis.summary` after Step 2 |
+| `analysisCoverageScore`, `analysisIndustryAverage` | | From `AnalysisReport` |
+| `analysisCompetitorSummary` | | Short line from `analysis.competitors` |
+
+Use **`buildPitchGenerationRequest({ brand, campaign, match, channel, valueProp, collaborationType, senderName, analysis })`** from Step 5 instead of hand-authored mock payloads.
 
 ## Available shadcn/ui Components
 

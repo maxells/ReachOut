@@ -59,7 +59,9 @@ export function saveToCache(input: MatchInput, results: MatchResult[]): void {
 function toParams(input: MatchInput): CacheParams {
   return {
     industry: input.brand.industry,
-    keywords: input.brand.keywords,
+    keywords: input.brand.keywords?.length
+      ? input.brand.keywords
+      : [input.brand.industry],
     followersMin: input.campaign.followerRange[0],
     followersMax: input.campaign.followerRange[1],
   };
