@@ -40,11 +40,8 @@ export default function Step4Matching() {
   }, [brand, campaign, setMatches]);
 
   React.useEffect(() => {
-    if (matches.length === 0 && !isLoading) {
-      void runMatching();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void runMatching();
+  }, [runMatching]);
 
   return (
     <>
