@@ -39,11 +39,8 @@ export type SearchStrategy = z.infer<typeof searchStrategySchema>;
 const scoredCreatorSchema = z.object({
   profileIndex: z.number().describe("Index of the profile in the input list"),
   matchScore: z.number().min(0).max(100).describe("Match score 0-100"),
-  reasoning: z.string().describe("Why this influencer is a good fit"),
-  niche: z.array(z.string()).describe("Expertise areas of this influencer"),
-  isInfluencer: z
-    .boolean()
-    .describe("Whether this person is actually an influencer vs regular employee"),
+  reasoning: z.string().describe("Why this creator is shown and how they relate to the brand"),
+  niche: z.array(z.string()).describe("Relevant topics or positioning for this creator"),
 });
 
 const scoringResultSchema = z.object({
@@ -121,28 +118,25 @@ export async function scoreAndRankCreators(
   const { object } = await generateObject({
     model,
     schema: scoringResultSchema,
-    system: `You are an influencer-brand matching expert.
+    system: `You are a brand↔creator matching expert for LinkedIn campaigns.
 
-CRITICAL RULES:
-1. You MUST only score profiles from the provided list. Use the "profileIndex" field to reference them.
-2. Do NOT invent or hallucinate any profiles that are not in the input.
-3. Only include profiles that are ACTUALLY influencers (content creators, thought leaders, speakers, newsletter authors) — NOT regular employees.
-4. If fewer than 5 profiles qualify as influencers, return only those that qualify.
-5. Returning an empty results array is acceptable if no profiles match.
-6. Score based on: relevance to the target industry, alignment with search keywords, content creation activity, and follower count within the specified range.`,
-    prompt: `Score these LinkedIn profiles for influencer match.
+RULES:
+1. Only score profiles from the provided list — use profileIndex to reference them (0 … N-1).
+2. Never invent profiles.
+3. Return exactly one result object per profile in the list (same N as profiles above), every index covered once.
+4. Prefer thought leaders and active creators when signals exist, but it is OK to score practitionersPMs/engineers lower instead of omitting them.
+5. Higher score = stronger fit for the brand's industry, keywords, and follower range.`,
+    prompt: `Score every LinkedIn profile below for relevance to this campaign.
 
 Industry: ${brand.industry}
 Search Keywords: ${keywords.join(", ")}
 Follower Range: ${followersMin} - ${followersMax}
 
-Profiles to evaluate:
+Profiles (${profileSummaries.length} total — return ${profileSummaries.length} scores, indices 0..${profileSummaries.length - 1}):
 ${JSON.stringify(profileSummaries, null, 2)}
 
-Score based on how well each profile aligns with the industry and keywords above.
-Prefer influencers whose connection count falls within the follower range (${followersMin} - ${followersMax}).
-Return ONLY profiles that are genuine influencers with a matchScore >= 50.
-Maximum 5 results, sorted by score descending.`,
+Boost scores when headline/summary shows content creation, audience, or topical authority—use follower range (${followersMin} - ${followersMax}) as guidance, not a hard gate.
+Give lower scores rather than skipping anyone. Sort your results array by matchScore descending after assigning each index.`,
   });
 
   return object.results;

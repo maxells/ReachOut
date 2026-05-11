@@ -157,10 +157,9 @@ function normalizeProfile(raw: ProfileScraperItem): LinkedInProfile | null {
 
 // ─── Composed entry point used by the route ───────────────────────────
 
-// Hard cap on profiles enriched per request. Profile-scraper costs $3.50/1k,
-// so 5 profiles ≈ $0.018. Google SERP is cheap, so we ask for a few extra
-// URLs and only enrich the top MAX_PROFILES_PER_REQUEST.
-const MAX_PROFILES_PER_REQUEST = 5;
+// Hard cap on profiles enriched per request. Profile-scraper costs $3.50/1k;
+// we scrape a larger batch so downstream can always surface 4 surfaced matches.
+const MAX_PROFILES_PER_REQUEST = 12;
 
 export async function searchLinkedInPeople(
   industry: string,

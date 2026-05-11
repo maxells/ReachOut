@@ -131,7 +131,6 @@ describe("CLōD API — scoreAndRankCreators", () => {
       expect(typeof scored.reasoning).toBe("string");
       expect(scored.reasoning.length).toBeGreaterThan(0);
       expect(scored.niche).toBeInstanceOf(Array);
-      expect(typeof scored.isInfluencer).toBe("boolean");
     }
 
     // Alice (DevOps leader) should score higher than Bob (QA intern)
