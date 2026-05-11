@@ -6,6 +6,7 @@ import { CreatorList } from "@/components/scraping/creator-list";
 import { StepLayout } from "@/components/funnel/step-layout";
 import { StepNav } from "@/components/funnel/step-nav";
 import { useFunnelStore } from "@/lib/store";
+import { mergeMatchPayloadFromHtmlStorage } from "@/lib/html-funnel-match-payload";
 import type { MatchResult } from "@/lib/types";
 
 export default function Step4Matching() {
@@ -21,10 +22,16 @@ export default function Step4Matching() {
     setIsLoading(true);
     setError(null);
     try {
+      const { brand: effectiveBrand, campaign: effectiveCampaign } =
+        mergeMatchPayloadFromHtmlStorage(brand, campaign);
+
       const res = await fetch("/api/match-creators", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brand, campaign }),
+        body: JSON.stringify({
+          brand: effectiveBrand,
+          campaign: effectiveCampaign,
+        }),
       });
       const data = (await res.json()) as {
         matches?: MatchResult[];
