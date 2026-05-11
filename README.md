@@ -39,6 +39,19 @@ Open [http://localhost:3000](http://localhost:3000) for the Next app (landing st
 
 **Both at once:** use two terminals — `npm run landing` (port **4173**) for the static GoFamous UI, and `npm run dev` (port **3000**) for the funnel.
 
+### Deploy to Vercel
+
+Do **not** commit `.env.local` or API keys. Link the repo in the Vercel dashboard **or**:
+
+```bash
+npx vercel login
+npx vercel link
+npm run vercel:sync-env    # uploads keys from .env.local → Production + Preview
+npm run vercel:deploy      # production deployment
+```
+
+`vercel:sync-env` forwards: `OPENAI_API_KEY`, `OPENAI_MODEL`, `CLOD_API_KEY`, `APIFY_API_TOKEN`, plus optional HeyReach / outreach vars listed in `scripts/sync-env-to-vercel.mjs`.
+
 ## Tech Stack
 
 - **Next.js 15** (App Router) + TypeScript

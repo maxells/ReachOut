@@ -10,7 +10,9 @@
     "test:watch": "vitest",
     "lint": "eslint",
     "landing": "node scripts/serve-front-end.mjs",
-    "e2e:outreach": "node scripts/run-outreach-e2e.mjs"
+    "e2e:outreach": "node scripts/run-outreach-e2e.mjs",
+    "vercel:sync-env": "node scripts/sync-env-to-vercel.mjs",
+    "vercel:deploy": "npx vercel deploy --prod"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.63",
