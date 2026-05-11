@@ -12,7 +12,7 @@ const pageRoutes: Record<string, string> = {
   "mentions.html": "/funnel/step2-analysis",
   "campaign.html": "/funnel/step3-campaign",
   "matching.html": "/funnel/step4-matching",
-  "outreach.html": "/funnel/step5-outreach",
+  "outreach.html": "/funnel/step5-outreach/prepare",
 };
 
 function assetUrl(path: string) {

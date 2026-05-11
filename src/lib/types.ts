@@ -21,6 +21,10 @@ export interface BrandInfo {
     linkedin?: string;
     website?: string;
   };
+  /** Optional: set by input + matching flow for scraper / cache (Apify, CLōD). */
+  followers_min?: number;
+  followers_max?: number;
+  creator_search_keywords?: string[];
 }
 
 export interface CampaignConfig {

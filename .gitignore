@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+.context
+
+# Local-only E2E fixtures (may contain real LinkedIn URLs)
+.context/e2e/*.local.json

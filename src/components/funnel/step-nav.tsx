@@ -11,6 +11,8 @@ interface StepNavProps {
   nextLabel?: string;
   backLabel?: string;
   disableNext?: boolean;
+  /** Match `public/gofamous` button styles (lime primary). */
+  variant?: "shadcn" | "gofamous";
 }
 
 export function StepNav({
@@ -19,6 +21,7 @@ export function StepNav({
   nextLabel = "Continue",
   backLabel = "Back",
   disableNext = false,
+  variant = "shadcn",
 }: StepNavProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -54,16 +57,39 @@ export function StepNav({
 
   return (
     <div className="flex items-center justify-between pt-6">
-      <Button
-        variant="outline"
-        onClick={handleBack}
-        disabled={isFirst}
-      >
-        {backLabel}
-      </Button>
-      <Button onClick={handleNext} disabled={disableNext}>
-        {isLast ? "Launch Campaign" : nextLabel}
-      </Button>
+      {variant === "gofamous" ? (
+        <>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={handleBack}
+            disabled={isFirst}
+          >
+            {backLabel}
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={handleNext}
+            disabled={disableNext}
+          >
+            {isLast ? "Launch Campaign" : nextLabel}
+          </button>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={isFirst}
+          >
+            {backLabel}
+          </Button>
+          <Button onClick={handleNext} disabled={disableNext}>
+            {isLast ? "Launch Campaign" : nextLabel}
+          </Button>
+        </>
+      )}
     </div>
   );
 }
