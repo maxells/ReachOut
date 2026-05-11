@@ -5,17 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { PitchGeneratingOverlay } from "@/components/outreach/pitch-generating-overlay";
-import {
-  fetchAndHydrateDefaultOutreachSession,
-  STEP5_ENTRY_GATE_KEY,
-} from "@/lib/outreach-session-hydrate";
+import { STEP5_ENTRY_GATE_KEY } from "@/lib/outreach-session-hydrate";
 import { useFunnelStore } from "@/lib/store";
 
 /**
- * Always land here before the main Step 5 page: wait for persisted store, then
- * either use existing funnel data (steps 1–4) or load the default session JSON,
- * set a one-time entry gate, and `replace` to `/funnel/step5-outreach` where
- * LLM draft generation runs.
+ * Land here before the main Step 5 page: wait for persisted store, then continue
+ * only when steps 1–4 left brand, campaign, and matches in the store.
  */
 export default function Step5OutreachPreparePage() {
   const router = useRouter();
@@ -30,7 +25,7 @@ export default function Step5OutreachPreparePage() {
       router.replace("/funnel/step5-outreach");
     };
 
-    const run = async () => {
+    const run = () => {
       const { matches, brand, campaign } = useFunnelStore.getState();
       const hasFunnelData =
         matches.length > 0 &&
@@ -42,19 +37,17 @@ export default function Step5OutreachPreparePage() {
         return;
       }
 
-      const result = await fetchAndHydrateDefaultOutreachSession();
-      if (cancelled) return;
-      if (result.ok) {
-        goToOutreach();
-      } else {
-        setError(result.message);
+      if (!cancelled) {
+        setError(
+          "Complete steps 1–4 first so we have your brand, campaign, and matched creators."
+        );
       }
     };
 
     const persist = useFunnelStore.persist;
 
     if (persist.hasHydrated()) {
-      void run();
+      run();
       return () => {
         cancelled = true;
       };
@@ -62,7 +55,7 @@ export default function Step5OutreachPreparePage() {
 
     const unsub = persist.onFinishHydration(() => {
       if (cancelled) return;
-      void run();
+      run();
     });
 
     return () => {
@@ -89,21 +82,14 @@ export default function Step5OutreachPreparePage() {
             color: "var(--text, #171717)",
           }}
         >
-          <h2 style={{ marginTop: 0 }}>Could not load session</h2>
+          <h2 style={{ marginTop: 0 }}>Session not ready</h2>
           <p style={{ lineHeight: 1.5 }}>{error}</p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={() => {
-                setError(null);
-                window.location.reload();
-              }}
-            >
-              Retry
-            </button>
+            <Link href="/funnel/step1-onboarding" className="btn btn-primary btn-sm">
+              Start from Step 1
+            </Link>
             <Link href="/funnel/step4-matching" className="btn btn-secondary btn-sm">
-              Go to Step 4
+              Go to Creator Matching
             </Link>
           </div>
         </section>
