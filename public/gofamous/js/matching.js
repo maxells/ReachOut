@@ -168,6 +168,21 @@
     return { brand, campaign };
   }
 
+  /* ── Strip decorative emoji from scraped names ─────────────── */
+  function stripEmojiPictographs(s) {
+    if (!s) return "";
+    try {
+      return String(s)
+        .replace(/\ufe0f/g, "")
+        .replace(/\u200d/g, "")
+        .replace(/\p{Extended_Pictographic}/gu, "")
+        .trim()
+        .replace(/\s{2,}/g, " ");
+    } catch {
+      return String(s).trim();
+    }
+  }
+
   /* ── Format numbers ───────────────────────────────────────── */
   function fmtNum(n) {
     if (!n || n === 0) return "—";
@@ -178,12 +193,19 @@
 
   /* ── Initials from name ───────────────────────────────────── */
   function initials(name) {
-    return name
-      .split(" ")
-      .map((w) => w[0] ?? "")
-      .join("")
-      .toUpperCase()
+    const s = stripEmojiPictographs(name).trim();
+    const parts = s.split(/\s+/).filter(Boolean);
+    const firstChar = (w) => {
+      const chars = [...(w.normalize("NFC"))];
+      return chars.find((ch) => !/\s/.test(ch)) || "?";
+    };
+    if (parts.length >= 2) {
+      return `${firstChar(parts[0])}${firstChar(parts[parts.length - 1])}`.toUpperCase();
+    }
+    const graphemes = [...(parts[0] || "").normalize("NFC")]
+      .filter((ch) => !/\s/.test(ch))
       .slice(0, 2);
+    return graphemes.length ? graphemes.join("").toUpperCase() : "?";
   }
 
   /* ── Score badge class ────────────────────────────────────── */
@@ -194,9 +216,11 @@
   /* ── Render a single MatchResult as a kol-card ────────────── */
   function renderCard(match) {
     const { creator, matchScore, reasoning } = match;
+    const displayName = stripEmojiPictographs(creator.name || "");
+    const displayBio = stripEmojiPictographs((creator.bio || creator.handle || "").slice(0, 280));
     const niche = (creator.niche || []).slice(0, 3);
     const nicheHtml = niche
-      .map((n) => `<span class="tag">${escapeHtml(n)}</span>`)
+      .map((n) => `<span class="tag">${escapeHtml(stripEmojiPictographs(n))}</span>`)
       .join("");
 
     const platformLabel = creator.platform
@@ -210,12 +234,12 @@
           <div class="kol-meta" style="flex:1;min-width:0">
             <div style="display:flex;align-items:center;gap:0.5rem">
               <h3 style="margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                ${escapeHtml(creator.name)}
+                ${escapeHtml(displayName)}
               </h3>
               <span class="${scoreBadgeClass(matchScore)}">${matchScore}%</span>
             </div>
             <p class="kol-handle" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-              ${escapeHtml(creator.bio || creator.handle)}
+              ${escapeHtml(displayBio)}
             </p>
             <div class="kol-tags">
               <span class="tag platform">${escapeHtml(platformLabel)}</span>

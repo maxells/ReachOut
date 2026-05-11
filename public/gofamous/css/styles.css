@@ -516,21 +516,36 @@ a.step-dot[aria-current="page"] {
 
 .kol-why {
   display: flex;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.95rem 1rem;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  border-left: 3px solid var(--accent);
+  border: 1px solid var(--border);
+}
+
+@media (min-width: 560px) {
+  .kol-why {
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
 }
 
 .kol-why-label {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-muted);
-  padding-top: 0.1rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--pill);
+  background: var(--text);
+  color: var(--surface);
 }
 
 .kol-why-text {
