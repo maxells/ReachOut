@@ -24,6 +24,13 @@
     localStorage.setItem(STORAGE, JSON.stringify(data));
   }
 
+  function followerFromInput(sel) {
+    const el = qs(sel);
+    if (!el) return null;
+    const n = parseInt(String(el.value).replace(/,/g, "").trim(), 10);
+    return Number.isFinite(n) ? n : null;
+  }
+
   function gather() {
     const channels = qsa("#ch-pills .pill-ro.on").map((b) => b.textContent.trim());
     const industries = qsa("#industry-pills .cat-pill.selected").map((b) =>
@@ -32,7 +39,20 @@
     const keywords = qsa("#kw-tags .kw-chip").map((el) =>
       el.getAttribute("data-kw")
     );
-    return { channels, industries, keywords };
+    let followerMin = followerFromInput("#fol-min") ?? 10_000;
+    let followerMax = followerFromInput("#fol-max") ?? 200_000;
+    if (followerMin > followerMax) {
+      const s = followerMin;
+      followerMin = followerMax;
+      followerMax = s;
+    }
+    return {
+      channels,
+      industries,
+      keywords,
+      followerMin,
+      followerMax,
+    };
   }
 
   function formatSummaryList(items, maxLen) {
@@ -167,13 +187,31 @@
       });
     }
 
+    const minEl = qs("#fol-min");
+    const maxEl = qs("#fol-max");
+    if (minEl && typeof d.followerMin === "number") {
+      minEl.value = Number(d.followerMin).toLocaleString("en-US");
+    }
+    if (maxEl && typeof d.followerMax === "number") {
+      maxEl.value = Number(d.followerMax).toLocaleString("en-US");
+    }
+
     updateSnapshot();
+  }
+
+  function bindFollowerInputs() {
+    ["#fol-min", "#fol-max"].forEach((sel) => {
+      const el = qs(sel);
+      if (!el) return;
+      ["change", "blur"].forEach((ev) => el.addEventListener(ev, updateSnapshot));
+    });
   }
 
   function init() {
     bindChannels();
     bindIndustry();
     bindKeywords();
+    bindFollowerInputs();
     hydrate();
   }
 

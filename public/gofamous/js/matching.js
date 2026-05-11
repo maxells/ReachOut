@@ -4,26 +4,85 @@
  * Reads brand data from reachout_brand_v1 (written by brand.js in step 1)
  * and campaign data from gofamous_campaign_v1 (written by campaign.js in step 3).
  * Sends to /api/match-creators, then renders kol-cards using the shared CSS.
- * Results are cached in gofamous_matches_v1.
+ * Results are cached in gofamous_matches_v1, keyed by a fingerprint of the
+ * same inputs that change the API result (name, industry, keywords, follower
+ * range, channels, brand social URLs). Changing any of those triggers a fresh
+ * /api/match-creators call instead of replaying stale cards.
  */
 (function () {
   const BRAND_KEY = "reachout_brand_v1";
   const CAMPAIGN_KEY = "gofamous_campaign_v1";
   const MATCHES_KEY = "gofamous_matches_v1";
 
-  /* ── Read cached matches ──────────────────────────────────── */
-  function loadMatches() {
+  /* ── Cache: only reuse when params match ─────────────────────────── */
+  function fingerprintPayload(p) {
+    let brandRaw = {};
+    let campaignRaw = {};
     try {
-      const raw = localStorage.getItem(MATCHES_KEY);
-      if (!raw) return [];
-      return JSON.parse(raw);
+      brandRaw = JSON.parse(localStorage.getItem(BRAND_KEY) || "{}");
     } catch {
-      return [];
+      brandRaw = {};
     }
+    try {
+      campaignRaw = JSON.parse(localStorage.getItem(CAMPAIGN_KEY) || "{}");
+    } catch {
+      campaignRaw = {};
+    }
+
+    const kw = [...(p.brand.keywords || [])]
+      .map((s) => String(s).trim())
+      .filter(Boolean)
+      .sort();
+    const ch = [...(p.campaign.channels || [])].map(String).sort();
+    const soc = p.brand.socials || {};
+    const fr = p.campaign.followerRange || [];
+    const industriesSel = [...(campaignRaw.industries || [])]
+      .map((s) => String(s))
+      .sort();
+    const categoriesSel = [...(brandRaw.categories || [])].map(String).sort();
+    const obj = {
+      name: String(p.brand.name || ""),
+      url: String(p.brand.url || ""),
+      industry: String(p.brand.industry || ""),
+      industriesSorted: industriesSel.join("|"),
+      categoriesSorted: categoriesSel.join("|"),
+      keywords: kw,
+      followerMin: Number(fr[0]) || 0,
+      followerMax: Number(fr[1]) || 0,
+      channels: ch,
+      li: String(soc.linkedin || ""),
+      tw: String(soc.twitter || ""),
+      yt: String(soc.youtube || ""),
+    };
+    return JSON.stringify(obj);
   }
 
-  function saveMatches(matches) {
-    localStorage.setItem(MATCHES_KEY, JSON.stringify(matches));
+  function loadCacheEntry() {
+    try {
+      const raw = localStorage.getItem(MATCHES_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (
+        parsed &&
+        typeof parsed.paramsKey === "string" &&
+        Array.isArray(parsed.matches)
+      ) {
+        return { paramsKey: parsed.paramsKey, matches: parsed.matches };
+      }
+      if (Array.isArray(parsed)) {
+        return { paramsKey: "", matches: parsed };
+      }
+    } catch {
+      /* ignore */
+    }
+    return null;
+  }
+
+  function saveCache(entry) {
+    localStorage.setItem(
+      MATCHES_KEY,
+      JSON.stringify({ paramsKey: entry.paramsKey, matches: entry.matches })
+    );
   }
 
   /* ── Build API payload from HTML localStorage keys ────────── */
@@ -73,15 +132,31 @@
       (ch) => channelMap[ch] || ch.toLowerCase()
     );
 
-    // Read follower range from the DOM inputs (they are in campaign.html)
-    let folMin = 10000;
-    let folMax = 200000;
+    let folMin =
+      typeof campaignRaw.followerMin === "number" &&
+      Number.isFinite(campaignRaw.followerMin)
+        ? campaignRaw.followerMin
+        : 10000;
+    let folMax =
+      typeof campaignRaw.followerMax === "number" &&
+      Number.isFinite(campaignRaw.followerMax)
+        ? campaignRaw.followerMax
+        : 200000;
+
     try {
       const minEl = document.getElementById("fol-min");
       const maxEl = document.getElementById("fol-max");
-      if (minEl) folMin = parseInt(minEl.value.replace(/,/g, ""), 10) || 10000;
-      if (maxEl) folMax = parseInt(maxEl.value.replace(/,/g, ""), 10) || 200000;
-    } catch { /* use defaults */ }
+      if (minEl) {
+        const pMin = parseInt(minEl.value.replace(/,/g, ""), 10);
+        if (Number.isFinite(pMin)) folMin = pMin;
+      }
+      if (maxEl) {
+        const pMax = parseInt(maxEl.value.replace(/,/g, ""), 10);
+        if (Number.isFinite(pMax)) folMax = pMax;
+      }
+    } catch {
+      /* use values from campaign store */
+    }
 
     const campaign = {
       budget: 5000,
@@ -268,9 +343,8 @@
         }
         const matches = data.matches || [];
         console.log(`[Step4] API returned ${matches.length} match(es)`);
-        if (matches.length > 0) {
-          saveMatches(matches);
-        }
+        const fp = fingerprintPayload(payload);
+        saveCache({ paramsKey: fp, matches });
         render(matches);
       })
       .catch((err) => {
@@ -289,11 +363,22 @@
       fetchMatches();
       return;
     }
-    const cached = loadMatches();
-    if (cached.length > 0) {
-      console.log("[Step4] Using cached matches (" + cached.length + ")");
-      render(cached);
+    const payload = buildPayload();
+    const fp = fingerprintPayload(payload);
+    const entry = loadCacheEntry();
+    const hit =
+      entry &&
+      entry.paramsKey &&
+      fp === entry.paramsKey &&
+      Array.isArray(entry.matches);
+    if (hit) {
+      console.log("[Step4] Cache hit (" + entry.matches.length + ") for current filters");
+      hide("match-state-loading");
+      render(entry.matches);
     } else {
+      if (entry && entry.paramsKey && fp !== entry.paramsKey) {
+        console.log("[Step4] Filters changed vs cached search — fetching fresh matches…");
+      }
       fetchMatches();
     }
   }
