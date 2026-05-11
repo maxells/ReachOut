@@ -299,6 +299,19 @@
     if (el) el.classList.add("hidden");
   }
 
+  /** While the API request is in flight: never show Empty until fetch settles. */
+  function showFetchLoading() {
+    hide("match-state-empty");
+    hide("match-results");
+    const grid = document.getElementById("kol-grid");
+    if (grid) grid.innerHTML = "";
+    const countEl = document.getElementById("match-count");
+    if (countEl) countEl.textContent = "";
+    const continueBtn = document.getElementById("step-continue");
+    if (continueBtn) continueBtn.classList.add("hidden");
+    show("match-state-loading");
+  }
+
   /* ── Render cached results ────────────────────────────────── */
   function render(matches) {
     hide("match-state-loading");
@@ -351,6 +364,8 @@
       show("match-state-empty");
       return;
     }
+
+    showFetchLoading();
 
     fetch("/api/match-creators", {
       method: "POST",

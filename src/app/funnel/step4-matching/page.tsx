@@ -15,12 +15,14 @@ export default function Step4Matching() {
   const matches = useFunnelStore((s) => s.matches);
   const setMatches = useFunnelStore((s) => s.setMatches);
 
-  const [isLoading, setIsLoading] = React.useState(false);
+  // Start true so the first paint is loading, not EmptyState — useEffect runs after paint.
+  const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   const runMatching = React.useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    setMatches([]);
     try {
       const { brand: effectiveBrand, campaign: effectiveCampaign } =
         mergeMatchPayloadFromHtmlStorage(brand, campaign);
@@ -71,9 +73,10 @@ export default function Step4Matching() {
                 Retry
               </button>
             </div>
-          ) : null}
-          <CreatorList matches={matches} isLoading={isLoading} />
-          {matches.length > 0 && !isLoading ? (
+          ) : (
+            <CreatorList matches={matches} isLoading={isLoading} />
+          )}
+          {!error && matches.length > 0 && !isLoading ? (
             <div className="flex justify-end">
               <button
                 type="button"
@@ -86,7 +89,7 @@ export default function Step4Matching() {
           ) : null}
         </div>
       </StepLayout>
-      <StepNav disableNext={matches.length === 0} />
+      <StepNav disableNext={isLoading || matches.length === 0} />
     </>
   );
 }
