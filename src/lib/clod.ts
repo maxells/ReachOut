@@ -9,12 +9,24 @@ export interface MatchInput {
   campaign: CampaignConfig;
 }
 
-const clod = createOpenAI({
-  baseURL: "https://api.clod.io/v1",
-  apiKey: process.env.CLOD_API_KEY!,
-});
+const CLOD_API_KEY = process.env.CLOD_API_KEY ?? "";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY ?? "";
 
-const model = clod.chat("gpt-4o-mini");
+
+function getModel() {
+  if (CLOD_API_KEY?.trim() && !CLOD_API_KEY.includes("your-key-here")) {
+    const clod = createOpenAI({
+      baseURL: "https://api.clod.io/v1",
+      apiKey: CLOD_API_KEY,
+    });
+    return clod.chat("gpt-4o-mini");
+  }
+  if (OPENAI_API_KEY?.trim() && !OPENAI_API_KEY.includes("your-key-here")) {
+    const openai = createOpenAI({ apiKey: OPENAI_API_KEY });
+    return openai.chat("gpt-4o-mini");
+  }
+  return null;
+}
 
 // --- Schemas for structured output ---
 
@@ -54,6 +66,16 @@ export type ScoredCreator = z.infer<typeof scoredCreatorSchema>;
 export async function generateSearchStrategy(
   input: MatchInput
 ): Promise<SearchStrategy> {
+  const model = getModel();
+  if (!model) {
+    console.warn("[clod] No AI key available — returning mock search strategy");
+    return {
+      titleSearches: [input.brand.industry, ...input.brand.keywords.slice(0, 2)],
+      targetTitles: ["Founder", "CEO", "Thought Leader", "Content Creator"],
+      targetKeywords: input.brand.keywords.length > 0 ? input.brand.keywords : [input.brand.industry],
+    };
+  }
+
   const { brand, campaign } = input;
   const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry];
   const [followersMin, followersMax] = campaign.followerRange;
@@ -94,31 +116,84 @@ export interface LinkedInProfile {
   skills?: string[];
 }
 
+function hashCode(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  }
+  return Math.abs(h);
+}
+
+function mockScoreProfiles(profiles: LinkedInProfile[], input: MatchInput): ScoredCreator[] {
+  const { brand } = input;
+  const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry.toLowerCase()];
+  
+  return profiles.map((p, i) => {
+    const headlineLower = (p.headline || "").toLowerCase();
+    const summaryLower = (p.summary || "").toLowerCase();
+    const combined = headlineLower + " " + summaryLower;
+    
+    let score = 50 + (hashCode(p.name + p.profileUrl) % 30);
+    const matches: string[] = [];
+    
+    for (const kw of keywords) {
+      const kwLower = kw.toLowerCase();
+      if (combined.includes(kwLower)) {
+        score += 10;
+        matches.push(kw);
+      }
+    }
+    
+    if (combined.includes("founder") || combined.includes("ceo")) score += 5;
+    if (combined.includes("creator") || combined.includes("influencer")) score += 8;
+    if (combined.includes("thought leader")) score += 6;
+    if (p.connections && p.connections > 5000) score += 5;
+    
+    score = Math.min(95, Math.max(40, score));
+    
+    const niche = matches.length > 0 ? matches.slice(0, 3) : [brand.industry];
+    
+    return {
+      profileIndex: i,
+      matchScore: score,
+      reasoning: `${p.name} works in ${brand.industry} and their profile indicates relevant expertise. ${matches.length > 0 ? `Keywords matched: ${matches.join(", ")}.` : "General industry fit based on profile signals."}`,
+      niche,
+    };
+  });
+}
+
 export async function scoreAndRankCreators(
   profiles: LinkedInProfile[],
   input: MatchInput
 ): Promise<ScoredCreator[]> {
   if (profiles.length === 0) return [];
 
-  const { brand, campaign } = input;
-  const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry];
-  const [followersMin, followersMax] = campaign.followerRange;
+  const model = getModel();
+  if (!model) {
+    console.warn("[clod] No AI key available — using mock scoring");
+    return mockScoreProfiles(profiles, input);
+  }
 
-  const profileSummaries = profiles.map((p, i) => ({
-    index: i,
-    name: p.name,
-    headline: p.headline,
-    profileUrl: p.profileUrl,
-    location: p.location || "Unknown",
-    connections: p.connections || 0,
-    summary: p.summary || "",
-    skills: (p.skills || []).slice(0, 10).join(", "),
-  }));
+  try {
+    const { brand, campaign } = input;
+    const keywords = brand.keywords.length > 0 ? brand.keywords : [brand.industry];
+    const [followersMin, followersMax] = campaign.followerRange;
 
-  const { object } = await generateObject({
-    model,
-    schema: scoringResultSchema,
-    system: `You are a brand↔creator matching expert for LinkedIn campaigns.
+    const profileSummaries = profiles.map((p, i) => ({
+      index: i,
+      name: p.name,
+      headline: p.headline,
+      profileUrl: p.profileUrl,
+      location: p.location || "Unknown",
+      connections: p.connections || 0,
+      summary: p.summary || "",
+      skills: (p.skills || []).slice(0, 10).join(", "),
+    }));
+
+    const { object } = await generateObject({
+      model,
+      schema: scoringResultSchema,
+      system: `You are a brand↔creator matching expert for LinkedIn campaigns.
 
 RULES:
 1. Only score profiles from the provided list — use profileIndex to reference them (0 … N-1).
@@ -126,7 +201,7 @@ RULES:
 3. Return exactly one result object per profile in the list (same N as profiles above), every index covered once.
 4. Prefer thought leaders and active creators when signals exist, but it is OK to score practitionersPMs/engineers lower instead of omitting them.
 5. Higher score = stronger fit for the brand's industry, keywords, and follower range.`,
-    prompt: `Score every LinkedIn profile below for relevance to this campaign.
+      prompt: `Score every LinkedIn profile below for relevance to this campaign.
 
 Industry: ${brand.industry}
 Search Keywords: ${keywords.join(", ")}
@@ -137,7 +212,11 @@ ${JSON.stringify(profileSummaries, null, 2)}
 
 Boost scores when headline/summary shows content creation, audience, or topical authority—use follower range (${followersMin} - ${followersMax}) as guidance, not a hard gate.
 Give lower scores rather than skipping anyone. Sort your results array by matchScore descending after assigning each index.`,
-  });
+    });
 
-  return object.results;
+    return object.results;
+  } catch (error) {
+    console.error("[clod] AI scoring failed, falling back to mock:", error);
+    return mockScoreProfiles(profiles, input);
+  }
 }

@@ -3,8 +3,12 @@ import { generateSearchStrategy, scoreAndRankCreators } from "@/lib/clod";
 import type { LinkedInProfile, MatchInput } from "@/lib/clod";
 
 const APIFY_BASE_URL = "https://api.apify.com/v2";
-const APIFY_TOKEN = process.env.APIFY_API_TOKEN!;
+const APIFY_TOKEN = process.env.APIFY_API_TOKEN ?? "";
 const ACTOR_ID = "powerai~linkedin-peoples-search-scraper";
+
+function hasUsableApifyToken(): boolean {
+  return Boolean(APIFY_TOKEN?.trim() && !APIFY_TOKEN.includes("your-token-here"));
+}
 
 const testInput: MatchInput = {
   brand: {
@@ -51,7 +55,7 @@ describe("CLōD API — generateSearchStrategy", () => {
 // ─── Test 2: Apify — token validation + actor accessibility ───────────
 
 describe("Apify API — token and actor verification", () => {
-  it("authenticates successfully and can access the LinkedIn scraper actor", async () => {
+  it.skipIf(!hasUsableApifyToken())("authenticates successfully and can access the LinkedIn scraper actor", async () => {
     // Verify token by fetching user profile
     const userRes = await fetch(
       `${APIFY_BASE_URL}/users/me?token=${APIFY_TOKEN}`
