@@ -39,7 +39,7 @@ function dedupeProfiles(list: LinkedInProfile[]): LinkedInProfile[] {
 
 /** Ensure at least `minimum` creators so ranking can always emit FIXED_MATCH_COUNT. */
 function padProfilesFromMocks(list: LinkedInProfile[], minimum: number): LinkedInProfile[] {
-  let out = dedupeProfiles(list);
+  const out = dedupeProfiles(list);
   if (out.length >= minimum) return out;
   for (const m of MOCK_LINKEDIN_PROFILES) {
     if (out.length >= minimum) break;

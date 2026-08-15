@@ -22,7 +22,11 @@
 import type { LinkedInProfile } from "./clod";
 
 const APIFY_BASE_URL = "https://api.apify.com/v2";
-const APIFY_TOKEN = process.env.APIFY_API_TOKEN!;
+const APIFY_TOKEN = process.env.APIFY_API_TOKEN ?? "";
+
+function hasUsableApifyToken(): boolean {
+  return Boolean(APIFY_TOKEN?.trim() && !APIFY_TOKEN.includes("your-token-here"));
+}
 
 const GOOGLE_ACTOR_ID = "apify~google-search-scraper";
 const PROFILE_ACTOR_ID = "alwaysprimedev~linkedin-profile-scraper";
@@ -166,15 +170,25 @@ export async function searchLinkedInPeople(
   keywords: string[] = [],
   maxResults = MAX_PROFILES_PER_REQUEST
 ): Promise<LinkedInProfile[]> {
-  const cap = Math.min(maxResults, MAX_PROFILES_PER_REQUEST);
-  // Pull a few extra URLs in case some are non-profile pages or duplicates.
-  const urls = await searchLinkedInUrlsViaGoogle(industry, keywords, cap + 3);
-  if (urls.length === 0) return [];
-  const slice = urls.slice(0, cap);
-  console.log(
-    `[apify] Enriching ${slice.length} of ${urls.length} URL(s) (cap=${MAX_PROFILES_PER_REQUEST})`
-  );
-  return scrapeLinkedInProfiles(slice);
+  if (!hasUsableApifyToken()) {
+    console.warn("[apify] No APIFY_API_TOKEN — returning empty array for mock fallback");
+    return [];
+  }
+
+  try {
+    const cap = Math.min(maxResults, MAX_PROFILES_PER_REQUEST);
+    // Pull a few extra URLs in case some are non-profile pages or duplicates.
+    const urls = await searchLinkedInUrlsViaGoogle(industry, keywords, cap + 3);
+    if (urls.length === 0) return [];
+    const slice = urls.slice(0, cap);
+    console.log(
+      `[apify] Enriching ${slice.length} of ${urls.length} URL(s) (cap=${MAX_PROFILES_PER_REQUEST})`
+    );
+    return scrapeLinkedInProfiles(slice);
+  } catch (error) {
+    console.error("[apify] Apify pipeline failed, returning empty for fallback:", error);
+    return [];
+  }
 }
 
 // ─── Tiny synchronous Apify runner ────────────────────────────────────
